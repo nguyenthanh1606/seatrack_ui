@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
@@ -9,10 +10,13 @@ import 'src/resources/language_translations.dart';
 import 'src/views/pages/control_page.dart';
 import 'src/views/themes/app_theme.dart';
 
-void main() {
+Future<void> main() async {
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: Colors.transparent,
   ));
+  await dotenv.load(
+    fileName: ".env",
+  );
   runApp(MyApp());
 }
 
@@ -45,9 +49,12 @@ class _MyAppState extends State<MyApp> {
           locale: Get.deviceLocale,
           fallbackLocale: const Locale('vi', 'VN'),
           initialBinding: Binding(),
-          theme: AppTheme.light,
-          darkTheme: AppTheme.dark,
-          themeMode: ThemeMode.system,
+          // theme: AppTheme.light,
+          // darkTheme: AppTheme.dark,
+          // themeMode: ThemeMode.system,
+          theme: ThemeData(
+            fontFamily: 'SourceSansPro',
+          ),
           home: ControlPage(),
           debugShowCheckedModeBanner: false,
           title: 'Seatrack KHN',

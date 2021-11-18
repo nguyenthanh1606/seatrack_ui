@@ -9,11 +9,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final locales = [
-    {'name': 'English', 'locale': const Locale('en', 'US')},
-    {'name': 'Vietnamese', 'locale': const Locale('vi', 'VN')},
-  ];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

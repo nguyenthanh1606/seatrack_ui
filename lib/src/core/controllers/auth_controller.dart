@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:seatrack_ui/src/core/services/local_storage_user.dart';
 import 'package:seatrack_ui/src/models/user_model.dart';
+import 'package:seatrack_ui/src/views/pages/control_page.dart';
 
 class AuthController extends GetxController {
   final GlobalKey<FormState> loginFormKey = GlobalKey<FormState>();
@@ -52,18 +53,33 @@ class AuthController extends GetxController {
 
   void signOut() async {
     try {
-      LocalStorageUser.clearUserData();
+      await LocalStorageUser.clearUserData();
+      _currentUser = null;
+      update();
+      Get.offAll(() => const ControlPage());
     } catch (error) {
       print(error);
     }
   }
 
-  void checkLogin() {
-    final isValid = loginFormKey.currentState!.validate();
-    if (!isValid) {
-      return;
+  void signInWithUsernameAndPassword() async {
+    try {
+      UserModel user = UserModel(
+          username: usernameController.text,
+          password: passwordController.text,
+          token: '11111');
+      saveUserLocal(user);
+      await getCurrentUser();
+      Get.offAll(() => const ControlPage());
+    } catch (error) {
+      String errorMessage =
+          error.toString().substring(error.toString().indexOf(' ') + 1);
+      Get.snackbar(
+        'Failed to login..',
+        errorMessage,
+        snackPosition: SnackPosition.BOTTOM,
+      );
     }
-    loginFormKey.currentState!.save();
   }
   // void saveUser(UserCredential userCredential) async {
   //   UserModel _userModel = UserModel(
@@ -77,7 +93,7 @@ class AuthController extends GetxController {
   //   saveUserLocal(_userModel);
   // }
 
-  // void saveUserLocal(UserModel userModel) async {
-  //   LocalStorageUser.setUserData(userModel);
-  // }
+  void saveUserLocal(UserModel userModel) async {
+    LocalStorageUser.setUserData(userModel);
+  }
 }

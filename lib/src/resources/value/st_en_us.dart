@@ -1,4 +1,5 @@
 const Map<String, String> en = {
+  'welcome': 'Welcome',
   'appTitle': 'GetX Multi Lingual Support',
   'title': 'Easy Language Translations',
   'subtitle':

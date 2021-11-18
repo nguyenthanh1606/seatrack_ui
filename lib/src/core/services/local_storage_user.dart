@@ -16,6 +16,6 @@ class LocalStorageUser {
 
   static clearUserData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.clear();
+    await prefs.remove('user');
   }
 }

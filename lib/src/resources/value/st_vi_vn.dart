@@ -1,4 +1,5 @@
 const Map<String, String> vi = {
+  'welcome': 'Xin chào',
   'appTitle': 'GetX Đa ngôn ngữ',
   'title': 'GetX Đa ngôn ngữ',
   'subtitle': 'GetX Đa ngôn ngữ',
