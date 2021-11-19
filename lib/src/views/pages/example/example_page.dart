@@ -1,5 +1,6 @@
 import 'package:bubble_tab_indicator/bubble_tab_indicator.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:seatrack_ui/src/models/mock/device_stage_mock.dart';
 import 'package:seatrack_ui/src/views/themes/_themes.dart';
 
@@ -44,9 +45,19 @@ class HomeWidgetState extends State<ExamplePage>
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
           return <Widget>[
             SliverAppBar(
+              leading: IconButton(
+                icon: Icon(Icons.search),
+                onPressed: () => {},
+              ),
+              actions: [
+                IconButton(
+                  icon: Icon(Icons.search),
+                  onPressed: () => {},
+                ),
+              ],
               title: Center(child: Text('Danh sách xe'.toUpperCase())),
               pinned: true, //<-- pinned to true
-              floating: false, //<-- floating to true
+              floating: true, //<-- floating to true
               forceElevated:
                   innerBoxIsScrolled, //<-- forceElevated to innerBoxIsScrolled
               bottom: TabBar(
@@ -68,8 +79,7 @@ class HomeWidgetState extends State<ExamplePage>
         body: TabBarView(
           controller: _tabController,
           children: tabs.map((Tab tab) {
-            var index = tabs.indexOf(tab);
-            return ListDeviceWidget(devices: devices, index: index);
+            return ListDeviceWidget(devices: devices);
           }).toList(),
         ),
       ),

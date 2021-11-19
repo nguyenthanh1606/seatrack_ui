@@ -4,7 +4,7 @@ import 'package:hexcolor/hexcolor.dart';
 const primaryColor = Color.fromRGBO(0, 197, 105, 1);
 
 class ValidatorApp {
-  static double fheaderHeight = 250;
+  static double fheaderHeight = 230;
 }
 
 class ThemeHelper {

@@ -21,7 +21,7 @@ Color statusColor(int statusId) {
     case 4:
       {
         // no gps
-        return AppColors.yellow;
+        return AppColors.red;
       }
     default:
       {
