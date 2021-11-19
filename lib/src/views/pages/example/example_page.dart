@@ -46,7 +46,7 @@ class HomeWidgetState extends State<ExamplePage>
             SliverAppBar(
               title: Center(child: Text('Danh sách xe'.toUpperCase())),
               pinned: true, //<-- pinned to true
-              floating: false, //<-- floating to true
+              floating: true, //<-- floating to true
               forceElevated:
                   innerBoxIsScrolled, //<-- forceElevated to innerBoxIsScrolled
               bottom: TabBar(
