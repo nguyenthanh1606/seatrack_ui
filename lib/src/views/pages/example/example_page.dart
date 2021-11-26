@@ -1,88 +1,108 @@
-import 'package:bubble_tab_indicator/bubble_tab_indicator.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:seatrack_ui/src/models/mock/device_stage_mock.dart';
-import 'package:seatrack_ui/src/views/themes/_themes.dart';
 
-import 'widgets/list_device_widgets.dart';
+class MyHomePage extends StatefulWidget {
+  final String title;
 
-class ExamplePage extends StatefulWidget {
-  const ExamplePage({Key? key}) : super(key: key);
+  MyHomePage({Key? key, required this.title}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() {
-    return HomeWidgetState();
-  }
+  _MyHomePageState createState() => _MyHomePageState();
 }
 
-class HomeWidgetState extends State<ExamplePage>
-    with SingleTickerProviderStateMixin {
-  final List<Tab> tabs = <Tab>[
-    Tab(text: "Tất cả"),
-    Tab(text: "Đang chạy"),
-    Tab(text: "Dừng"),
-    Tab(text: "Mất liên lạc"),
-  ];
-  final List<DeviceStageMock> devices = getDeviceStageMock();
-  TabController? _tabController;
-
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(vsync: this, length: tabs.length);
-  }
-
-  @override
-  void dispose() {
-    _tabController!.dispose();
-    super.dispose();
-  }
+class _MyHomePageState extends State<MyHomePage> {
+  int _selectedDestination = 0;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: NestedScrollView(
-        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-          return <Widget>[
-            SliverAppBar(
-              leading: IconButton(
-                icon: Icon(Icons.search),
-                onPressed: () => {},
-              ),
-              actions: [
-                IconButton(
-                  icon: Icon(Icons.search),
-                  onPressed: () => {},
+    final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
+
+    return Row(
+      children: [
+        Drawer(
+          child: ListView(
+            // Important: Remove any padding from the ListView.
+            padding: EdgeInsets.zero,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text(
+                  'Header',
+                  style: textTheme.headline6,
                 ),
-              ],
-              title: Center(child: Text('Danh sách xe'.toUpperCase())),
-              pinned: true, //<-- pinned to true
-              floating: true, //<-- floating to true
-              forceElevated:
-                  innerBoxIsScrolled, //<-- forceElevated to innerBoxIsScrolled
-              bottom: TabBar(
-                isScrollable: true,
-                unselectedLabelColor: Colors.white,
-                labelColor: Colors.white,
-                indicatorSize: TabBarIndicatorSize.tab,
-                indicator: const BubbleTabIndicator(
-                  indicatorHeight: 25.0,
-                  indicatorColor: Colors.cyan,
-                  tabBarIndicatorSize: TabBarIndicatorSize.tab,
-                ),
-                tabs: tabs,
-                controller: _tabController,
               ),
-            ),
-          ];
-        },
-        body: TabBarView(
-          controller: _tabController,
-          children: tabs.map((Tab tab) {
-            return ListDeviceWidget(devices: devices);
-          }).toList(),
+              Divider(
+                height: 1,
+                thickness: 1,
+              ),
+              ListTile(
+                leading: Icon(Icons.favorite),
+                title: Text('Item 1'),
+                selected: _selectedDestination == 0,
+                onTap: () => selectDestination(0),
+              ),
+              ListTile(
+                leading: Icon(Icons.delete),
+                title: Text('Item 2'),
+                selected: _selectedDestination == 1,
+                onTap: () => selectDestination(1),
+              ),
+              ListTile(
+                leading: Icon(Icons.label),
+                title: Text('Item 3'),
+                selected: _selectedDestination == 2,
+                onTap: () => selectDestination(2),
+              ),
+              Divider(
+                height: 1,
+                thickness: 1,
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text(
+                  'Label',
+                ),
+              ),
+              ListTile(
+                leading: Icon(Icons.bookmark),
+                title: Text('Item A'),
+                selected: _selectedDestination == 3,
+                onTap: () => selectDestination(3),
+              ),
+            ],
+          ),
         ),
-      ),
+        VerticalDivider(
+          width: 1,
+          thickness: 1,
+        ),
+        Expanded(
+          child: Scaffold(
+            appBar: AppBar(
+              title: Text(widget.title),
+            ),
+            body: GridView.count(
+              crossAxisCount: 2,
+              crossAxisSpacing: 20,
+              mainAxisSpacing: 20,
+              padding: EdgeInsets.all(20),
+              childAspectRatio: 3 / 2,
+              children: [
+                Image.asset('assets/nav-drawer-1.jpg'),
+                Image.asset('assets/nav-drawer-2.jpg'),
+                Image.asset('assets/nav-drawer-3.jpg'),
+                Image.asset('assets/nav-drawer-4.jpg'),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
+  }
+
+  void selectDestination(int index) {
+    setState(() {
+      _selectedDestination = index;
+    });
   }
 }

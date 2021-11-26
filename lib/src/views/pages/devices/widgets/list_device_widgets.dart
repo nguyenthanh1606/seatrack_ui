@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:seatrack_ui/src/core/controllers/_controller.dart';
-import 'package:seatrack_ui/src/helper/path.dart';
 import 'package:seatrack_ui/src/helper/ulti.dart';
+import 'package:seatrack_ui/src/views/pages/report/report_history_page.dart';
 import 'package:seatrack_ui/src/views/themes/_themes.dart';
-import 'package:seatrack_ui/src/views/widgets/_widgets.dart';
 
-import '../info_device_ex_page.dart';
+import '../info_device_page.dart';
 
 class ListDeviceWidget extends StatefulWidget {
   const ListDeviceWidget({Key? key, this.devices}) : super(key: key);
@@ -150,47 +147,6 @@ class _ListDeviceWidgetState extends State<ListDeviceWidget> {
                                     SizedBox(
                                       height: AppWidthHeight.w500,
                                     ),
-                                    // RichText(
-                                    //   text: TextSpan(
-                                    //     style: TextStyle(color: Colors.black),
-                                    //     children: [
-                                    //       WidgetSpan(
-                                    //         child:
-                                    //             Icon(Icons.vpn_key_sharp, size: 14),
-                                    //       ),
-                                    //       TextSpan(
-                                    //         text: " mở",
-                                    //       ),
-                                    //     ],
-                                    //   ),
-                                    // ),
-                                    // SizedBox(
-                                    //   height: AppWidthHeight.w250,
-                                    // ),
-                                    // RichText(
-                                    //   text: TextSpan(
-                                    //     style: TextStyle(color: Colors.black),
-                                    //     children: [
-                                    //       WidgetSpan(
-                                    //         child: Icon(Icons.signal_cellular_alt,
-                                    //             size: 14),
-                                    //       ),
-                                    //       TextSpan(
-                                    //         text: " Tốt",
-                                    //       ),
-                                    //     ],
-                                    //   ),
-                                    // ),
-                                    // SizedBox(
-                                    //   height: AppWidthHeight.w250,
-                                    // ),
-                                    // SizedBox(
-                                    //   child: Text(
-                                    //       '${widget.devices[index].lat.toString()},${widget.devices[index].lng.toString()}'),
-                                    // ),
-                                    // SizedBox(
-                                    //   height: AppWidthHeight.w250,
-                                    // ),
                                     SizedBox(
                                       child: Text(
                                         'Địa chỉ: ${widget.devices[index].address}',
@@ -232,14 +188,15 @@ class ListViewCategories extends StatelessWidget {
   Widget build(BuildContext context) {
     return Stack(
       children: <Widget>[
-        Positioned(
-          top: 0,
-          bottom: 0,
-          right: 0,
-          child: Icon(Icons.more_vert, color: Theme.of(context).primaryColor),
-        ),
+        // Positioned(
+        //   top: 0,
+        //   bottom: 0,
+        //   right: 0,
+        //   child: Icon(Icons.more_vert, color: Theme.of(context).primaryColor),
+        // ),
         Padding(
-          padding: const EdgeInsets.only(right: 30),
+          // padding: const EdgeInsets.only(right: 30),
+          padding: const EdgeInsets.only(right: 0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -277,7 +234,9 @@ class ListViewCategories extends StatelessWidget {
                   ),
                 ),
                 icon: Icon(Icons.add_road),
-                onPressed: () {},
+                onPressed: () {
+                  Get.to(() => ReportPage());
+                },
               ),
             ],
           ),
@@ -285,20 +244,4 @@ class ListViewCategories extends StatelessWidget {
       ],
     );
   }
-}
-
-class DeviceMenuReport {
-  String name;
-  String icon;
-
-  DeviceMenuReport({
-    required this.name,
-    required this.icon,
-  });
-}
-
-List<DeviceMenuReport> getDeviceMenuReport() {
-  return [
-    DeviceMenuReport(name: 'Theo dõi', icon: 'a'),
-  ];
 }

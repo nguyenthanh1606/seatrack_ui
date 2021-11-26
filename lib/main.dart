@@ -27,8 +27,8 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   @override
-  void didChangeDependencies() {
-    getLocale().then((locale) {
+  Future<void> didChangeDependencies() async {
+    await getLocale().then((locale) {
       setState(() {
         Get.updateLocale(locale);
       });
@@ -47,13 +47,13 @@ class _MyAppState extends State<MyApp> {
         builder: () => GetMaterialApp(
           translations: LanguageTranslations(),
           locale: Get.deviceLocale,
-          fallbackLocale: const Locale('vi', 'VN'),
+          fallbackLocale: const Locale('en', 'US'),
           initialBinding: Binding(),
           // theme: AppTheme.light,
           // darkTheme: AppTheme.dark,
           // themeMode: ThemeMode.system,
           theme: ThemeData(
-            fontFamily: 'SourceSansPro',
+            primarySwatch: Colors.blue,
           ),
           home: ControlPage(),
           debugShowCheckedModeBanner: false,

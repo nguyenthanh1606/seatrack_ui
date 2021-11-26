@@ -14,10 +14,10 @@ class ControlViewModel extends GetxController {
     _navigatorIndex = index;
     switch (index) {
       case 0:
-        _currentScreen = const ReportPage();
+        _currentScreen = const AlterPage();
         break;
       case 1:
-        _currentScreen = const ExamplePage();
+        _currentScreen = const DevicePage();
         break;
       case 2:
         _currentScreen = const HomePage();
