@@ -42,4 +42,6 @@
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 </dict>
+<key>Map4dMapAccessKey</key>
+<string>844263edde9fa2091e2cc08d94543ae8</string>
 </plist>

@@ -56,7 +56,7 @@ class AuthController extends GetxController {
       await LocalStorageUser.clearUserData();
       _currentUser = null;
       update();
-      Get.offAll(() => const ControlPage());
+      Get.offAll(() => ControlPage());
     } catch (error) {
       print(error);
     }
@@ -70,7 +70,7 @@ class AuthController extends GetxController {
           token: '11111');
       saveUserLocal(user);
       await getCurrentUser();
-      Get.offAll(() => const ControlPage());
+      Get.offAll(() => ControlPage());
     } catch (error) {
       String errorMessage =
           error.toString().substring(error.toString().indexOf(' ') + 1);

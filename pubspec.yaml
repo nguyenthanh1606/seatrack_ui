@@ -49,6 +49,11 @@ dependencies:
       url: https://github.com/Realank/flutter_datetime_picker.git
       ref: master
   intl: ^0.17.0
+  connectivity: ^3.0.6
+  map4d_map: ^2.0.1
+  google_maps_flutter: ^2.1.1
+  flutter_polyline_points: ^1.0.0
+  latlong2: ^0.8.1
 
 dev_dependencies:
   flutter_test:
@@ -79,6 +84,7 @@ flutter:
     - .env
     - assets/
     - assets/images/icons/
+    - london_to_british.json
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

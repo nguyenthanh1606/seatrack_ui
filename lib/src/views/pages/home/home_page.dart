@@ -4,7 +4,7 @@ import 'package:seatrack_ui/src/core/controllers/app_system_controller.dart';
 import 'package:seatrack_ui/src/core/services/local_storage_map.dart';
 
 import 'gmap/map_main_page.dart';
-import '4dmap/4dmap_main_page.dart';
+import '4dmap/map4d_main_page.dart';
 import 'omap/omap_main_page.dart';
 
 class HomePage extends StatefulWidget {
