@@ -4,14 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:syncfusion_flutter_maps/maps.dart';
 
-class OMapPage extends StatefulWidget {
-  const OMapPage({Key? key}) : super(key: key);
+class OMapReport extends StatefulWidget {
+  const OMapReport({Key? key}) : super(key: key);
 
   @override
-  _OMapPageState createState() => _OMapPageState();
+  _OMapReportState createState() => _OMapReportState();
 }
 
-class _OMapPageState extends State<OMapPage>
+class _OMapReportState extends State<OMapReport>
     with SingleTickerProviderStateMixin {
   late MapZoomPanBehavior _zoomPanBehavior;
   MapTileLayerController? _mapController;
@@ -150,52 +150,11 @@ class _OMapPageState extends State<OMapPage>
                   ),
                 ],
               ),
-              Align(
-                alignment: Alignment.topCenter,
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      _buildChipWidget(0, 'The British Museum'),
-                      _buildChipWidget(1, 'The Windsor Castle'),
-                      _buildChipWidget(2, 'Twickenham Stadium'),
-                      _buildChipWidget(3, 'Chessington World of Adventures'),
-                      _buildChipWidget(4, 'Hampton Court Palace'),
-                    ],
-                  ),
-                ),
-              )
             ]);
           } else {
             return Container();
           }
         });
-  }
-
-  Widget _buildChipWidget(int index, String city) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 8.0),
-      child: ChoiceChip(
-        backgroundColor: Colors.white,
-        elevation: 3.0,
-        label: Text(
-          city,
-          style: TextStyle(
-            color: Colors.white,
-          ),
-        ),
-        selected: _currentSelectedCityIndex == index,
-        onSelected: (bool isSelected) {
-          if (isSelected) {
-            setState(() {
-              _currentSelectedCityIndex = index;
-              _currentNavigationLine(index, city);
-            });
-          }
-        },
-      ),
-    );
   }
 
   void _currentNavigationLine(int index, String city) {

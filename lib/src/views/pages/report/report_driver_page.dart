@@ -6,14 +6,14 @@ import '../control_page.dart';
 import 'widgets/end_draw_widget.dart';
 import 'widgets/menu_widget.dart';
 
-class ReportTotalPage extends StatefulWidget {
-  const ReportTotalPage({Key? key}) : super(key: key);
+class ReportDriverPage extends StatefulWidget {
+  const ReportDriverPage({Key? key}) : super(key: key);
 
   @override
-  _ReportTotalPageState createState() => _ReportTotalPageState();
+  _ReportDriverPageState createState() => _ReportDriverPageState();
 }
 
-class _ReportTotalPageState extends State<ReportTotalPage> {
+class _ReportDriverPageState extends State<ReportDriverPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,7 +24,7 @@ class _ReportTotalPageState extends State<ReportTotalPage> {
           icon: Icon(Icons.arrow_back),
           onPressed: () => {Get.to(() => ControlPage())},
         ),
-        title: Text('Báo cáo tổng hợp'),
+        title: Text('Báo cáo HĐ tài xế'),
         centerTitle: true,
         actions: [
           PopUpMenuWidget(),

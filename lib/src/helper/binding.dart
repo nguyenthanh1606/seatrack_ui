@@ -9,5 +9,6 @@ class Binding extends Bindings {
     Get.lazyPut(() => NetworkViewModel());
     Get.lazyPut(() => HomeController());
     Get.lazyPut(() => AppSystemController());
+    Get.lazyPut(() => ReportController());
   }
 }

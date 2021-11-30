@@ -235,7 +235,7 @@ class ListViewCategories extends StatelessWidget {
                 ),
                 icon: Icon(Icons.add_road),
                 onPressed: () {
-                  Get.to(() => ReportPage());
+                  Get.to(() => ReportHistoryPage());
                 },
               ),
             ],

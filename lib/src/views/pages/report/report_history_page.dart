@@ -1,17 +1,47 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:seatrack_ui/src/views/pages/report/widgets/tab_search_widget.dart';
+import 'package:syncfusion_flutter_maps/maps.dart';
 
+import '../control_page.dart';
 import 'widgets/end_draw_widget.dart';
+import 'widgets/menu_widget.dart';
 
-class ReportPage extends StatefulWidget {
-  const ReportPage({Key? key}) : super(key: key);
+class ReportHistoryPage extends StatefulWidget {
+  const ReportHistoryPage({Key? key}) : super(key: key);
 
   @override
-  _ReportPageState createState() => _ReportPageState();
+  _ReportHistoryPageState createState() => _ReportHistoryPageState();
 }
 
-class _ReportPageState extends State<ReportPage> {
+class _ReportHistoryPageState extends State<ReportHistoryPage> {
+  late MapShapeSource _mapSource;
+  MapTileLayerController? _mapController;
+  late MapZoomPanBehavior _zoomPanBehavior;
+
+  @override
+  void initState() {
+    _mapController = MapTileLayerController();
+    _zoomPanBehavior = MapZoomPanBehavior(
+      minZoomLevel: 3,
+      zoomLevel: 10,
+      focalLatLng: const MapLatLng(51.4700, -0.2843),
+      toolbarSettings: const MapToolbarSettings(
+          direction: Axis.vertical, position: MapToolbarPosition.bottomRight),
+      maxZoomLevel: 15,
+      enableDoubleTapZooming: true,
+    );
+
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _mapController?.dispose();
+    _mapController = null;
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,51 +50,31 @@ class _ReportPageState extends State<ReportPage> {
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
-          onPressed: () => {Get.back()},
+          onPressed: () => {Get.to(() => ControlPage())},
         ),
-        title: Text('Tra cứu lộ trình'),
+        title: Text('Báo cáo lộ trình'),
         centerTitle: true,
         actions: [
           PopUpMenuWidget(),
         ],
       ),
       body: Stack(children: [
+        SfMaps(
+          layers: <MapLayer>[
+            MapTileLayer(
+              urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+              controller: _mapController,
+              zoomPanBehavior: _zoomPanBehavior,
+            ),
+          ],
+        ),
         Positioned(
           bottom: 0,
           left: 0,
           right: 0,
           child: TabSearchWidget(),
-        )
-      ]),
-    );
-  }
-}
-
-class PopUpMenuWidget extends StatelessWidget {
-  const PopUpMenuWidget({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return PopupMenuButton(
-      icon: Icon(Icons.more_vert),
-      itemBuilder: (BuildContext context) => <PopupMenuEntry>[
-        PopupMenuItem(
-          child: TextButton(
-            onPressed: () {},
-            child: Row(
-              children: [
-                Icon(
-                  Icons.report_gmailerrorred,
-                ),
-                Text(
-                  "   Báo cáo dầu",
-                  style: TextStyle(color: Colors.blue, fontSize: 16),
-                ),
-              ],
-            ),
-          ),
         ),
-      ],
+      ]),
     );
   }
 }

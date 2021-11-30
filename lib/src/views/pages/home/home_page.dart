@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:seatrack_ui/src/core/controllers/app_system_controller.dart';
 import 'package:seatrack_ui/src/core/services/local_storage_map.dart';
 
-import 'gmap/map_main_page.dart';
+import 'gmap/map_ex_page.dart';
 import '4dmap/map4d_main_page.dart';
 import 'omap/omap_main_page.dart';
 
