@@ -40,7 +40,6 @@ dependencies:
   json_annotation: ^4.3.0
   path: ^1.8.0
   shared_preferences: ^2.0.8
-  flutter_dotenv: ^5.0.2
   convex_bottom_bar: ^3.0.0
   bubble_tab_indicator: ^0.1.6
   settings_ui: ^1.0.0
@@ -50,10 +49,11 @@ dependencies:
       ref: master
   intl: ^0.17.0
   connectivity: ^3.0.6
-  map4d_map: ^2.0.1
   google_maps_flutter: ^2.1.1
   flutter_polyline_points: ^1.0.0
   syncfusion_flutter_maps: ^19.3.55-beta
+  dart_ipify: ^1.1.1
+  # map4d_map: ^2.0.1
 
 dev_dependencies:
   flutter_test:

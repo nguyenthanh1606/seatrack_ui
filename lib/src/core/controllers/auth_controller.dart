@@ -1,53 +1,42 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:seatrack_ui/src/core/repositories/authentication_api.dart';
+import 'package:seatrack_ui/src/core/repositories/user_api.dart';
 import 'package:seatrack_ui/src/core/services/local_storage_user.dart';
 import 'package:seatrack_ui/src/models/user_model.dart';
 import 'package:seatrack_ui/src/views/pages/control_page.dart';
 
 class AuthController extends GetxController {
-  final GlobalKey<FormState> loginFormKey = GlobalKey<FormState>();
+  bool _passwordVisible = true;
+  bool _loading = false;
+  late String token;
 
-  late TextEditingController usernameController, passwordController;
-  var username = '';
-  var password = '';
+  bool get loading => _loading;
+  String? username, password, userL;
 
-  UserModel? _currentUser;
+  bool? get passwordVisible => _passwordVisible;
+  String? get lastUser => getLastUser().then((res) {});
+  PrefsUser? _currentUser;
   String? get user => _currentUser?.username;
-
+  late final AuthAPI _auth;
   @override
   void onInit() {
+    debugPrint('AuthController onInit');
     super.onInit();
-    usernameController = TextEditingController();
-    passwordController = TextEditingController();
-  }
-
-  @override
-  void onReady() {
-    super.onReady();
   }
 
   @override
   void onClose() {
-    usernameController.dispose();
-    passwordController.dispose();
-  }
-
-  String? validateUsername(String value) {
-    if (value.length < 6 || value.length > 30) {
-      return "Username must be of 6 characters";
-    }
-    return null;
-  }
-
-  String? validatePassword(String value) {
-    if (value.length < 6 || value.length > 30) {
-      return "Password must be of 6 characters";
-    }
-    return null;
+    debugPrint('AuthController onClose');
   }
 
   getCurrentUser() async {
     _currentUser = await LocalStorageUser.getUserData();
+    update();
+  }
+
+  getLastUser() async {
+    userL = await LocalStorageUser.getLastUser();
     update();
   }
 
@@ -62,13 +51,30 @@ class AuthController extends GetxController {
     }
   }
 
-  void signInWithUsernameAndPassword() async {
+  void signInWithUserAndPassword() async {
+    _loading = true;
+    update();
     try {
-      UserModel user = UserModel(
-          username: usernameController.text,
-          password: passwordController.text,
-          token: '11111');
-      saveUserLocal(user);
+      await AuthAPI.signInWithUserAndPassword(username!, password!)
+          .then((res) async {
+        debugPrint(res.toString());
+        if (res == null) {
+          throw 'Error Tên đăng nhập hoặc mật khẩu không chính xác';
+        } else {
+          await UserAPI.getInfoByUserName(username!, res.toString())
+              .then((res2) {
+            // saveUserLocal(username!, password!, res.toString());
+            UserModel user = UserModel.fromJson(res2);
+            PrefsUser prefsUser = PrefsUser(
+              id: user.id,
+              username: user.userName,
+              token: res.toString(),
+            );
+            saveUserLocal(prefsUser);
+          });
+        }
+      });
+
       await getCurrentUser();
       Get.offAll(() => ControlPage());
     } catch (error) {
@@ -80,6 +86,8 @@ class AuthController extends GetxController {
         snackPosition: SnackPosition.BOTTOM,
       );
     }
+    _loading = false;
+    update();
   }
   // void saveUser(UserCredential userCredential) async {
   //   UserModel _userModel = UserModel(
@@ -93,7 +101,13 @@ class AuthController extends GetxController {
   //   saveUserLocal(_userModel);
   // }
 
-  void saveUserLocal(UserModel userModel) async {
-    LocalStorageUser.setUserData(userModel);
+  void saveUserLocal(PrefsUser prefsUser) async {
+    LocalStorageUser.setUserData(prefsUser);
+    LocalStorageUser.setLastUser(prefsUser.username);
+  }
+
+  void togglePasswordVisible() {
+    _passwordVisible = !_passwordVisible;
+    update();
   }
 }

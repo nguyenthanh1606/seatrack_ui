@@ -1,20 +1,30 @@
+import 'dart:ui';
+
 import 'package:get/get.dart';
 
 class ReportController extends GetxController {
-  RxInt searchSuss = 0.obs;
-
+  bool _loading = false;
+  bool get loading => _loading;
   @override
   void onInit() {
+    print('ReportController onInit');
     super.onInit();
   }
 
   @override
   void onReady() {
+    print('ReportController onReady');
     super.onReady();
   }
 
   @override
-  void onClose() {}
-  void toggleSearchSuss() =>
-      searchSuss.value == 0 ? searchSuss.value = 1 : searchSuss.value = 0;
+  void onClose() {
+    print('ReportController onClose');
+    super.onClose();
+  }
+
+  void toggleSearchSuss() {
+    _loading = !_loading;
+    update();
+  }
 }

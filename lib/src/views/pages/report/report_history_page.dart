@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:seatrack_ui/src/core/controllers/report_controller.dart';
 import 'package:seatrack_ui/src/views/pages/report/widgets/tab_search_widget.dart';
 import 'package:syncfusion_flutter_maps/maps.dart';
 
@@ -15,7 +16,6 @@ class ReportHistoryPage extends StatefulWidget {
 }
 
 class _ReportHistoryPageState extends State<ReportHistoryPage> {
-  late MapShapeSource _mapSource;
   MapTileLayerController? _mapController;
   late MapZoomPanBehavior _zoomPanBehavior;
 
@@ -46,10 +46,10 @@ class _ReportHistoryPageState extends State<ReportHistoryPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      endDrawer: EndDrawReport(),
+      endDrawer: const EndDrawReport(),
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () => {Get.to(() => ControlPage())},
         ),
         title: Text('Báo cáo lộ trình'),
@@ -58,23 +58,25 @@ class _ReportHistoryPageState extends State<ReportHistoryPage> {
           PopUpMenuWidget(),
         ],
       ),
-      body: Stack(children: [
-        SfMaps(
-          layers: <MapLayer>[
-            MapTileLayer(
-              urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-              controller: _mapController,
-              zoomPanBehavior: _zoomPanBehavior,
-            ),
-          ],
-        ),
-        Positioned(
-          bottom: 0,
-          left: 0,
-          right: 0,
-          child: TabSearchWidget(),
-        ),
-      ]),
+      body: Container(
+        child: Stack(children: [
+          SfMaps(
+            layers: <MapLayer>[
+              MapTileLayer(
+                urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                controller: _mapController,
+                zoomPanBehavior: _zoomPanBehavior,
+              ),
+            ],
+          ),
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: TabSearchWidget(),
+          ),
+        ]),
+      ),
     );
   }
 }

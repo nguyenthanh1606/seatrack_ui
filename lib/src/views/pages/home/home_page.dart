@@ -15,22 +15,22 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  Widget? page = GMapPage();
+  Widget? page = const DMapPage();
 
   Future<void> getPage() async {
     String mName = await getMap();
     switch (mName) {
       case 'Map4D':
-        page = DMapPage();
+        page = const DMapPage();
         break;
       case 'OpenStreetMap':
-        page = OMapPage();
+        page = const OMapPage();
         break;
       case 'GoogleMap':
-        page = GMapPage();
+        page = const GMapPage();
         break;
       default:
-        page = OMapPage();
+        page = const OMapPage();
     }
   }
 
