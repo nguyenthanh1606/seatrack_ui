@@ -26,28 +26,18 @@ class HomeController extends GetxController {
   late DeviceStageModel? _dvStageCurent;
   DeviceStageModel? get dvStageCurent => _dvStageCurent;
 
-  Set<MFMarker> markers = Set();
+  Map<MFMarkerId, MFMarker> markers = <MFMarkerId, MFMarker>{};
 
   @override
   void onInit() {
     super.onInit();
-    _map = MFMapView(
-      initialCameraPosition: position,
-      onMapCreated: onMapCreated,
-      onCameraMoveStarted: onCameraMoveStarted,
-      onCameraMove: onCameraMove,
-      onCameraIdle: onCameraIdle,
-      myLocationEnabled: true,
-      myLocationButtonEnabled: true,
-      onTap: onTap,
-      markers: markers,
-    );
+
     getDeviceGroup();
   }
 
   @override
   void onClose() {
-    _intervalData.cancel();
+    // _intervalData.cancel();
   }
 
   void getDeviceGroup() async {
@@ -64,18 +54,32 @@ class HomeController extends GetxController {
 
       _dvStageCurent = listDState[0];
       for (var item in listDState) {
-        MFMarker resultMarker = MFMarker(
+        final MFMarkerId markerId = MFMarkerId(item.deviceID.toString());
+        MFMarker marker = MFMarker(
             consumeTapEvents: true,
-            markerId: MFMarkerId(item.deviceID.toString()),
+            markerId: markerId,
             position: MFLatLng(item.latitude, item.longitude),
             icon: await MFBitmap.fromAssetImage(
-                const ImageConfiguration(), 'assets/icons/car_default.png'),
+                const ImageConfiguration(), 'assets/icons/car_blue.png'),
             onTap: () {
               moveCamera(item.latitude, item.longitude);
               panelMap(item);
             });
-        markers.add(resultMarker);
+        markers[markerId] = marker;
       }
+      _map = MFMapView(
+        initialCameraPosition: position,
+        mapType: MFMapType.roadmap,
+        onMapCreated: onMapCreated,
+        onCameraMoveStarted: onCameraMoveStarted,
+        onCameraMove: onCameraMove,
+        onCameraIdle: onCameraIdle,
+        myLocationEnabled: true,
+        myLocationButtonEnabled: true,
+        onTap: onTap,
+        markers: Set<MFMarker>.of(markers.values),
+      );
+      // setMr = Set<MFMarker>.of(markers.values);
       interval(0);
     } catch (error) {
       String errorMessage =
@@ -111,20 +115,18 @@ class HomeController extends GetxController {
           .then((res) async {
         listDState = List<DeviceStageModel>.from(
             res.map((e) => DeviceStageModel.fromJson(e)).toList());
-        debugPrint('data');
-        markers.clear();
+        // markers.clear();
+
         for (var item in listDState) {
-          MFMarker resultMarker = MFMarker(
-              consumeTapEvents: true,
-              markerId: MFMarkerId(item.deviceID.toString()),
-              position: MFLatLng(item.latitude, item.longitude),
-              icon: await MFBitmap.fromAssetImage(
-                  const ImageConfiguration(), 'assets/icons/car_default.png'),
-              onTap: () {
-                moveCamera(item.latitude, item.longitude);
-                panelMap(item);
-              });
-          markers.add(resultMarker);
+          if (item.state == 3) {
+            debugPrint('update marker ${item.vehicleNumber}');
+            MFMarkerId markerId = MFMarkerId(item.deviceID.toString());
+            MFMarker marker = markers[markerId]!;
+
+            markers[markerId] = marker.copyWith(
+              positionParam: MFLatLng(item.latitude, item.longitude),
+            );
+          }
         }
       });
     });

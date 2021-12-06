@@ -129,7 +129,7 @@ class PanelMapComponent extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Image.asset('assets/icons/car_default.png',
+                      Image.asset('assets/icons/car_blue.png',
                           width: 50, height: 50),
                       controller.dvStageCurent!.state == 3
                           ? Text(
