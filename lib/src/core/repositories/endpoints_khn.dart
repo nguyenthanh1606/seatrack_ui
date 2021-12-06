@@ -11,7 +11,7 @@ class Endpoints {
   //////////////////////////////
   //        DEVICE            //
   //////////////////////////////
-  static String getListDeviceByGroup(int groupId) {
+  static String getListDeviceByGroupId(int groupId) {
     return '$KHN_API_URL/device/group?id=$groupId';
   }
 

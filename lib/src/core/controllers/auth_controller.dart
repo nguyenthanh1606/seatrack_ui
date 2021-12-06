@@ -12,13 +12,11 @@ class AuthController extends GetxController {
   late String token;
 
   bool get loading => _loading;
-  String? username, password, userL;
+  String? username, password;
 
   bool? get passwordVisible => _passwordVisible;
-  String? get lastUser => getLastUser().then((res) {});
-  PrefsUser? _currentUser;
+  UserModel? _currentUser;
   String? get user => _currentUser?.username;
-  late final AuthAPI _auth;
   @override
   void onInit() {
     debugPrint('AuthController onInit');
@@ -32,11 +30,6 @@ class AuthController extends GetxController {
 
   getCurrentUser() async {
     _currentUser = await LocalStorageUser.getUserData();
-    update();
-  }
-
-  getLastUser() async {
-    userL = await LocalStorageUser.getLastUser();
     update();
   }
 
@@ -55,23 +48,13 @@ class AuthController extends GetxController {
     _loading = true;
     update();
     try {
-      await AuthAPI.signInWithUserAndPassword(username!, password!)
-          .then((res) async {
-        debugPrint(res.toString());
-        if (res == null) {
+      await AuthAPI.signInWithUserAndPassword(username!, password!).then((res) {
+        debugPrint(res['token'].toString());
+        if (res['status'] == 400) {
           throw 'Error Tên đăng nhập hoặc mật khẩu không chính xác';
         } else {
-          await UserAPI.getInfoByUserName(username!, res.toString())
-              .then((res2) {
-            // saveUserLocal(username!, password!, res.toString());
-            UserModel user = UserModel.fromJson(res2);
-            PrefsUser prefsUser = PrefsUser(
-              id: user.id,
-              username: user.userName,
-              token: res.toString(),
-            );
-            saveUserLocal(prefsUser);
-          });
+          UserModel user = UserModel(username: username!, token: res['token']);
+          saveUserLocal(user);
         }
       });
 
@@ -90,7 +73,7 @@ class AuthController extends GetxController {
     update();
   }
   // void saveUser(UserCredential userCredential) async {
-  //   UserModel _userModel = UserModel(
+  //   UserInfoModel _userModel = UserInfoModel(
   //     userId: userCredential.user!.uid,
   //     email: userCredential.user!.email!,
   //     name: name == null ? userCredential.user!.displayName! : this.name!,
@@ -101,9 +84,8 @@ class AuthController extends GetxController {
   //   saveUserLocal(_userModel);
   // }
 
-  void saveUserLocal(PrefsUser prefsUser) async {
+  void saveUserLocal(UserModel prefsUser) async {
     LocalStorageUser.setUserData(prefsUser);
-    LocalStorageUser.setLastUser(prefsUser.username);
   }
 
   void togglePasswordVisible() {

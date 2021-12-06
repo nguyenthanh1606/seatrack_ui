@@ -1,10 +1,5 @@
 import 'dart:convert';
-
-import 'package:dart_ipify/dart_ipify.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:seatrack_ui/src/models/user_model.dart';
-
-import 'endpoints_sea.dart';
+import 'endpoints_khn.dart';
 import 'request_api.dart';
 
 class AuthAPI {
@@ -13,12 +8,10 @@ class AuthAPI {
     Map<String, String> headers = {
       'Content-type': 'application/json; charset=utf-8',
       'Accept': 'application/json',
-      'ClientIP': await Ipify.ipv4(),
     };
     Map<String, dynamic> user = {
-      'UserName_': username,
-      'pass_': password,
-      'type_': 3,
+      'UserName': username,
+      '_Password': password,
     };
     final response =
         await postRequest(Uri.parse(Endpoints.login()), headers, user);

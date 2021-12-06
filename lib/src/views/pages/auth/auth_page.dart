@@ -53,7 +53,7 @@ class LoginPage extends GetView<AuthController> {
                               children: [
                                 Container(
                                   child: TextFormField(
-                                    initialValue: controller.lastUser!,
+                                    initialValue: 'ctynewpost',
                                     decoration:
                                         ThemeHelper().textInputDecoration(
                                       'User Name',
@@ -74,6 +74,7 @@ class LoginPage extends GetView<AuthController> {
                                 SizedBox(height: 30.0),
                                 Container(
                                   child: TextFormField(
+                                    initialValue: '123456',
                                     obscureText: controller.passwordVisible!,
                                     decoration: InputDecoration(
                                       labelText: 'Password',

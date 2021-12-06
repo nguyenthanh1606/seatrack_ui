@@ -3,7 +3,7 @@ import 'package:json_annotation/json_annotation.dart';
 part 'user_model.g.dart';
 
 @JsonSerializable()
-class UserModel {
+class UserInfoModel {
   final int id, sex, roleId, isActive;
   final String userName, fullName, idCard, email, numberPhone;
   final String? image, address_;
@@ -11,7 +11,7 @@ class UserModel {
   final DateTime? birthday;
   final int createBy;
 
-  UserModel({
+  UserInfoModel({
     required this.id,
     required this.userName,
     required this.fullName,
@@ -28,24 +28,22 @@ class UserModel {
     this.address_,
   });
 
+  factory UserInfoModel.fromJson(Map<String, dynamic> json) =>
+      _$UserInfoModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$UserInfoModelToJson(this);
+}
+
+@JsonSerializable()
+class UserModel {
+  final String username;
+  final String token;
+  UserModel({
+    required this.username,
+    required this.token,
+  });
   factory UserModel.fromJson(Map<String, dynamic> json) =>
       _$UserModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$UserModelToJson(this);
-}
-
-@JsonSerializable()
-class PrefsUser {
-  final int id;
-  final String username;
-  final String token;
-  PrefsUser({
-    required this.id,
-    required this.username,
-    required this.token,
-  });
-  factory PrefsUser.fromJson(Map<String, dynamic> json) =>
-      _$PrefsUserFromJson(json);
-
-  Map<String, dynamic> toJson() => _$PrefsUserToJson(this);
 }

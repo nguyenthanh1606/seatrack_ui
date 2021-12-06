@@ -40,8 +40,8 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
-	<false/>
+	<false/>	
+	<key>Map4dMapAccessKey</key>
+	<string>844263edde9fa2091e2cc08d94543ae8</string>
 </dict>
-<key>Map4dMapAccessKey</key>
-<string>844263edde9fa2091e2cc08d94543ae8</string>
 </plist>
