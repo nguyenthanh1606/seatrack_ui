@@ -30,6 +30,7 @@ class ControlPage extends StatelessWidget {
         : GetBuilder<ControlViewModel>(
             init: ControlViewModel(),
             builder: (controller) => Scaffold(
+              resizeToAvoidBottomInset: false,
               body: controller.currentScreen,
               bottomNavigationBar: CustomBottomNavigationBar(),
             ),

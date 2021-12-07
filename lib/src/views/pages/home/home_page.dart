@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:seatrack_ui/src/core/controllers/app_system_controller.dart';
 import 'package:seatrack_ui/src/core/services/local_storage_map.dart';
+import 'package:seatrack_ui/src/views/pages/home/widgets/_widget.dart';
 
 import 'gmap/map_ex_page.dart';
 import '4dmap/map4d_main_page.dart';
@@ -39,7 +40,11 @@ class _HomePageState extends State<HomePage> {
     return FutureBuilder<void>(
         future: getPage(),
         builder: (context, snapshot) {
-          return page!;
+          return Scaffold(
+            drawer: StartDrawHome(),
+            endDrawer: EndDrawHome(),
+            body: page!,
+          );
         });
   }
 }

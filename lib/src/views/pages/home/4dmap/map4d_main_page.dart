@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:map4d_map/map4d_map.dart';
 import 'package:seatrack_ui/src/core/controllers/home_controller.dart';
-import 'package:seatrack_ui/src/views/pages/home/widgets/panel_map.dart';
+import 'package:seatrack_ui/src/views/pages/home/widgets/_widget.dart';
 
 class DMapPage extends StatelessWidget {
   Completer<MFMapViewController> _controller = Completer();
@@ -21,7 +21,8 @@ class DMapPage extends StatelessWidget {
             )
           : Stack(children: <Widget>[
               controller.map,
-              PanelMapComponent(),
+              TopBarWidget(),
+              PanelMapWidget(),
             ]),
     );
   }

@@ -10,7 +10,7 @@ class HomeController extends GetxController {
   late Timer _intervalData;
   bool _loading = false;
   bool get loading => _loading;
-
+  int _currentGroup = 0;
   double _panelPosition = -120;
   double get panelPosition => _panelPosition;
 
@@ -31,13 +31,28 @@ class HomeController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-
+    initMap();
     getDeviceGroup();
   }
 
   @override
   void onClose() {
-    // _intervalData.cancel();
+    _intervalData.cancel();
+  }
+
+  void initMap() {
+    _map = MFMapView(
+      initialCameraPosition: position,
+      mapType: MFMapType.roadmap,
+      onMapCreated: onMapCreated,
+      onCameraMoveStarted: onCameraMoveStarted,
+      onCameraMove: onCameraMove,
+      onCameraIdle: onCameraIdle,
+      myLocationEnabled: true,
+      myLocationButtonEnabled: true,
+      onTap: onTap,
+      markers: Set<MFMarker>.of(markers.values),
+    );
   }
 
   void getDeviceGroup() async {
@@ -47,11 +62,11 @@ class HomeController extends GetxController {
         listDGroup = List<DeviceGroupModel>.from(
             res.map((e) => DeviceGroupModel.fromJson(e)).toList());
       });
-      await HomeAPI.getListDevieStage(listDGroup[0].vehicleGroupID).then((res) {
+      await HomeAPI.getListDevieStage(listDGroup[_currentGroup].vehicleGroupID)
+          .then((res) {
         listDState = List<DeviceStageModel>.from(
             res.map((e) => DeviceStageModel.fromJson(e)).toList());
       });
-
       _dvStageCurent = listDState[0];
       for (var item in listDState) {
         final MFMarkerId markerId = MFMarkerId(item.deviceID.toString());
@@ -67,20 +82,8 @@ class HomeController extends GetxController {
             });
         markers[markerId] = marker;
       }
-      _map = MFMapView(
-        initialCameraPosition: position,
-        mapType: MFMapType.roadmap,
-        onMapCreated: onMapCreated,
-        onCameraMoveStarted: onCameraMoveStarted,
-        onCameraMove: onCameraMove,
-        onCameraIdle: onCameraIdle,
-        myLocationEnabled: true,
-        myLocationButtonEnabled: true,
-        onTap: onTap,
-        markers: Set<MFMarker>.of(markers.values),
-      );
-      // setMr = Set<MFMarker>.of(markers.values);
-      interval(0);
+      initMap();
+      interval();
     } catch (error) {
       String errorMessage =
           error.toString().substring(error.toString().indexOf(' ') + 1);
@@ -94,9 +97,32 @@ class HomeController extends GetxController {
     update();
   }
 
-  void setMap(int indexGroup) async {
+  void setMap() async {
     _loading = true;
-    try {} catch (error) {
+    try {
+      await HomeAPI.getListDevieStage(listDGroup[_currentGroup].vehicleGroupID)
+          .then((res) {
+        listDState = List<DeviceStageModel>.from(
+            res.map((e) => DeviceStageModel.fromJson(e)).toList());
+      });
+      _dvStageCurent = listDState[0];
+      for (var item in listDState) {
+        final MFMarkerId markerId = MFMarkerId(item.deviceID.toString());
+        MFMarker marker = MFMarker(
+            consumeTapEvents: true,
+            markerId: markerId,
+            position: MFLatLng(item.latitude, item.longitude),
+            icon: await MFBitmap.fromAssetImage(
+                const ImageConfiguration(), 'assets/icons/car_blue.png'),
+            onTap: () {
+              moveCamera(item.latitude, item.longitude);
+              panelMap(item);
+            });
+        markers[markerId] = marker;
+      }
+      initMap();
+      interval();
+    } catch (error) {
       String errorMessage =
           error.toString().substring(error.toString().indexOf(' ') + 1);
       Get.snackbar(
@@ -109,20 +135,18 @@ class HomeController extends GetxController {
     update();
   }
 
-  void interval(int indexGroup) {
+  void interval() {
     _intervalData = Timer.periodic(Duration(seconds: 20), (timer) async {
-      await HomeAPI.getListDevieStage(listDGroup[indexGroup].vehicleGroupID)
+      await HomeAPI.getListDevieStage(listDGroup[_currentGroup].vehicleGroupID)
           .then((res) async {
         listDState = List<DeviceStageModel>.from(
             res.map((e) => DeviceStageModel.fromJson(e)).toList());
-        // markers.clear();
 
         for (var item in listDState) {
           if (item.state == 3) {
             debugPrint('update marker ${item.vehicleNumber}');
             MFMarkerId markerId = MFMarkerId(item.deviceID.toString());
-            MFMarker marker = markers[markerId]!;
-
+            final MFMarker marker = markers[markerId]!;
             markers[markerId] = marker.copyWith(
               positionParam: MFLatLng(item.latitude, item.longitude),
             );
@@ -130,6 +154,15 @@ class HomeController extends GetxController {
         }
       });
     });
+    update();
+  }
+
+  void changeCurrentGroup(int index) {
+    debugPrint('changeCurrentGroup');
+    _currentGroup = index;
+    markers.clear();
+    setMap();
+    update();
   }
   /////////////////////////////////
   ///          4D MAP           //
