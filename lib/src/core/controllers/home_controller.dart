@@ -11,6 +11,8 @@ class HomeController extends GetxController {
   bool _loading = false;
   bool get loading => _loading;
   int _currentGroup = 0;
+  int get currentGroup => _currentGroup;
+
   double _panelPosition = -120;
   double get panelPosition => _panelPosition;
 

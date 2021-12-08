@@ -5,87 +5,69 @@ class EndDrawHome extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Positioned(
-          height: MediaQuery.of(context).size.height,
-          left: 0,
-          right: 0,
-          top: 100,
-          child: Drawer(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              mainAxisSize: MainAxisSize.max,
-              children: <Widget>[
-                Padding(
-                  padding:
-                      const EdgeInsets.only(top: 8.0, left: 8.0, right: 8.0),
-                  child: Container(
-                    height: 50.0,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10.0),
-                        color: Colors.white),
-                    child: TextField(
-                      textInputAction: TextInputAction.search,
-                      decoration: InputDecoration(
-                          hintText: "Nhập biển số cần tìm?",
-                          border: InputBorder.none,
-                          contentPadding:
-                              EdgeInsets.only(left: 15.0, top: 15.0),
-                          suffixIcon: IconButton(
-                            icon: Icon(Icons.search),
-                            onPressed: () {},
-                            iconSize: 30.0,
-                          )),
-                      onChanged: (val) {},
-                      onSubmitted: (term) {},
-                    ),
-                  ),
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      child: Drawer(
+        child: Column(
+          children: <Widget>[
+            Container(
+              height: 150,
+              child: DrawerHeader(
+                decoration: BoxDecoration(
+                  color: Colors.blue,
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: ListView.builder(
-                    scrollDirection: Axis.vertical,
-                    shrinkWrap: true,
-                    itemCount: 2,
-                    itemBuilder: (BuildContext context, int index) {
-                      return Card(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            const ListTile(
-                              leading: Icon(Icons.album),
-                              title: Text('The Enchanted Nightingale'),
-                              subtitle: Text(
-                                  'Music by Julie Gable. Lyrics by Sidney Stein.'),
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: <Widget>[
-                                TextButton(
-                                  child: const Text('BUY TICKETS'),
-                                  onPressed: () {/* ... */},
-                                ),
-                                const SizedBox(width: 8),
-                                TextButton(
-                                  child: const Text('LISTEN'),
-                                  onPressed: () {/* ... */},
-                                ),
-                                const SizedBox(width: 8),
-                              ],
-                            ),
-                          ],
+                child: Stack(
+                  children: [
+                    Center(
+                      child: Text(
+                        'Danh sách xe'.toUpperCase(),
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
                         ),
-                      );
-                    },
-                  ),
+                      ),
+                    ),
+                    Positioned(
+                      left: 0,
+                      top: 0,
+                      bottom: 0,
+                      child: IconButton(
+                        color: Colors.white,
+                        icon: Icon(Icons.arrow_back),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    )
+                  ],
                 ),
-              ],
+              ),
             ),
-          ),
+            Expanded(
+              child: ListView.builder(
+                padding: EdgeInsets.only(top: 0.0),
+                itemCount: 22,
+                itemBuilder: (context, index) {
+                  return Ink(
+                    color: true ? Colors.white : null,
+                    child: ListTile(
+                      title: Text("profession.heading"),
+                      onTap: () {},
+                      leading: index == 0
+                          ? Icon(
+                              Icons.home,
+                            )
+                          : Icon(Icons.description),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }
