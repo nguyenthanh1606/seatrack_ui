@@ -37,13 +37,13 @@ class TopBarWidget extends StatelessWidget {
                   ),
                 ),
               ),
-              IconButton(
-                color: Theme.of(context).primaryColor,
-                icon: const Icon(Icons.group),
-                onPressed: () {
-                  Scaffold.of(context).openDrawer();
-                },
-              ),
+              // IconButton(
+              //   color: Theme.of(context).primaryColor,
+              //   icon: const Icon(Icons.group),
+              //   onPressed: () {
+              //     Scaffold.of(context).openDrawer();
+              //   },
+              // ),
               IconButton(
                 color: Theme.of(context).primaryColor,
                 icon: const Icon(Icons.more_vert),

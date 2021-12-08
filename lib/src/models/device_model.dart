@@ -7,11 +7,15 @@ class DeviceGroupModel {
   final int vehicleGroupID;
   final String vehicleGroup;
   final int countdv;
+  bool isShow;
+  List<DeviceStageModel>? listDvStage;
 
   DeviceGroupModel({
     required this.vehicleGroupID,
     required this.vehicleGroup,
     required this.countdv,
+    this.isShow = false,
+    this.listDvStage = null,
   });
 
   factory DeviceGroupModel.fromJson(Map<String, dynamic> json) =>

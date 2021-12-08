@@ -41,7 +41,6 @@ class _HomePageState extends State<HomePage> {
         future: getPage(),
         builder: (context, snapshot) {
           return Scaffold(
-            drawer: StartDrawHome(),
             endDrawer: EndDrawHome(),
             body: page!,
           );

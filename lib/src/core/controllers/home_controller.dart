@@ -10,8 +10,10 @@ class HomeController extends GetxController {
   late Timer _intervalData;
   bool _loading = false;
   bool get loading => _loading;
-  int _currentGroup = 0;
-  int get currentGroup => _currentGroup;
+  late int _currentGroupID;
+  int _currentIndexGroup = 0;
+  int get currentGroupID => _currentGroupID;
+  int get currentIndexGroup => _currentIndexGroup;
 
   double _panelPosition = -120;
   double get panelPosition => _panelPosition;
@@ -24,7 +26,7 @@ class HomeController extends GetxController {
   late MFMapViewController _controller;
 
   late List<DeviceGroupModel> listDGroup;
-  late List<DeviceStageModel> listDState;
+  // late List<DeviceStageModel> listDState;
   late DeviceStageModel? _dvStageCurent;
   DeviceStageModel? get dvStageCurent => _dvStageCurent;
 
@@ -64,26 +66,30 @@ class HomeController extends GetxController {
         listDGroup = List<DeviceGroupModel>.from(
             res.map((e) => DeviceGroupModel.fromJson(e)).toList());
       });
-      await HomeAPI.getListDevieStage(listDGroup[_currentGroup].vehicleGroupID)
-          .then((res) {
-        listDState = List<DeviceStageModel>.from(
+      _currentGroupID = listDGroup[_currentIndexGroup].vehicleGroupID;
+      await HomeAPI.getListDevieStage(_currentGroupID).then((res) {
+        var listDState = List<DeviceStageModel>.from(
             res.map((e) => DeviceStageModel.fromJson(e)).toList());
+        listDGroup[_currentIndexGroup].listDvStage = listDState;
       });
-      _dvStageCurent = listDState[0];
-      for (var item in listDState) {
-        final MFMarkerId markerId = MFMarkerId(item.deviceID.toString());
-        MFMarker marker = MFMarker(
-            consumeTapEvents: true,
-            markerId: markerId,
-            position: MFLatLng(item.latitude, item.longitude),
-            icon: await MFBitmap.fromAssetImage(
-                const ImageConfiguration(), 'assets/icons/car_blue.png'),
-            onTap: () {
-              moveCamera(item.latitude, item.longitude);
-              panelMap(item);
-            });
-        markers[markerId] = marker;
+      _dvStageCurent = listDGroup[_currentIndexGroup].listDvStage![0];
+      if (listDGroup[_currentIndexGroup].listDvStage != null) {
+        for (var item in listDGroup[_currentIndexGroup].listDvStage!) {
+          final MFMarkerId markerId = MFMarkerId(item.deviceID.toString());
+          MFMarker marker = MFMarker(
+              consumeTapEvents: true,
+              markerId: markerId,
+              position: MFLatLng(item.latitude, item.longitude),
+              icon: await MFBitmap.fromAssetImage(
+                  const ImageConfiguration(), 'assets/icons/car_blue.png'),
+              onTap: () {
+                moveCamera(item.latitude, item.longitude);
+                panelMap(item);
+              });
+          markers[markerId] = marker;
+        }
       }
+
       initMap();
       interval();
     } catch (error) {
@@ -102,13 +108,13 @@ class HomeController extends GetxController {
   void setMap() async {
     _loading = true;
     try {
-      await HomeAPI.getListDevieStage(listDGroup[_currentGroup].vehicleGroupID)
-          .then((res) {
-        listDState = List<DeviceStageModel>.from(
+      await HomeAPI.getListDevieStage(_currentGroupID).then((res) {
+        var listDState = List<DeviceStageModel>.from(
             res.map((e) => DeviceStageModel.fromJson(e)).toList());
+        _dvStageCurent = listDState[0];
+        listDGroup[_currentIndexGroup].listDvStage = listDState;
       });
-      _dvStageCurent = listDState[0];
-      for (var item in listDState) {
+      for (var item in listDGroup[_currentIndexGroup].listDvStage!) {
         final MFMarkerId markerId = MFMarkerId(item.deviceID.toString());
         MFMarker marker = MFMarker(
             consumeTapEvents: true,
@@ -139,11 +145,11 @@ class HomeController extends GetxController {
 
   void interval() {
     _intervalData = Timer.periodic(Duration(seconds: 20), (timer) async {
-      await HomeAPI.getListDevieStage(listDGroup[_currentGroup].vehicleGroupID)
-          .then((res) async {
-        listDState = List<DeviceStageModel>.from(
+      await HomeAPI.getListDevieStage(_currentGroupID).then((res) async {
+        var listDState = List<DeviceStageModel>.from(
             res.map((e) => DeviceStageModel.fromJson(e)).toList());
 
+        listDGroup[_currentIndexGroup].listDvStage = listDState;
         for (var item in listDState) {
           if (item.state == 3) {
             debugPrint('update marker ${item.vehicleNumber}');
@@ -159,12 +165,57 @@ class HomeController extends GetxController {
     update();
   }
 
-  void changeCurrentGroup(int index) {
+  void changeCurrentGroup(int vehicleGroupID) {
     debugPrint('changeCurrentGroup');
-    _currentGroup = index;
+    _currentIndexGroup = listDGroup
+        .indexWhere((element) => element.vehicleGroupID == vehicleGroupID);
+    _currentGroupID = vehicleGroupID;
     markers.clear();
     setMap();
     update();
+  }
+
+  Future<void> toggle(int index) async {
+    _loading = true;
+    listDGroup[index].isShow = !listDGroup[index].isShow;
+    if (listDGroup[index].listDvStage == null) {
+      await HomeAPI.getListDevieStage(listDGroup[index].vehicleGroupID)
+          .then((res) async {
+        var listDState = List<DeviceStageModel>.from(
+            res.map((e) => DeviceStageModel.fromJson(e)).toList());
+
+        listDGroup[index].listDvStage = listDState;
+      });
+    }
+    _loading = false;
+    update();
+  }
+
+  void setCurentDv(DeviceStageModel dv) {
+    _dvStageCurent = dv;
+    markers.clear();
+    // setmap
+    // setMapCurrent(dv);
+    // // init map
+    initMap;
+    debugPrint('');
+
+    update();
+  }
+
+  Future<void> setMapCurrent(DeviceStageModel dv) async {
+    final MFMarkerId markerId = MFMarkerId(dv.deviceID.toString());
+    MFMarker marker = MFMarker(
+        consumeTapEvents: true,
+        markerId: markerId,
+        position: MFLatLng(dv.latitude, dv.longitude),
+        icon: await MFBitmap.fromAssetImage(
+            const ImageConfiguration(), 'assets/icons/car_blue.png'),
+        onTap: () {
+          moveCamera(dv.latitude, dv.longitude);
+          panelMap(dv);
+        });
+    markers[markerId] = marker;
   }
   /////////////////////////////////
   ///          4D MAP           //
