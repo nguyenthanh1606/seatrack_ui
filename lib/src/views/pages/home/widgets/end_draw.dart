@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:seatrack_ui/src/core/controllers/home_controller.dart';
+import 'package:seatrack_ui/src/core/controllers/device_controller.dart';
 import 'package:seatrack_ui/src/models/device_model.dart';
 
 class EndDrawHome extends StatelessWidget {
@@ -8,8 +8,8 @@ class EndDrawHome extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<HomeController>(
-      init: Get.find<HomeController>(),
+    return GetBuilder<DeviceController>(
+      init: Get.find<DeviceController>(),
       builder: (controller) => Container(
         width: MediaQuery.of(context).size.width,
         child: Drawer(

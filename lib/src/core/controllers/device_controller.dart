@@ -6,8 +6,8 @@ import 'package:map4d_map/map4d_map.dart';
 import 'package:seatrack_ui/src/core/repositories/home_api.dart';
 import 'package:seatrack_ui/src/models/device_model.dart';
 
-class HomeController extends GetxController {
-  late Timer _intervalData;
+class DeviceController extends GetxController {
+  Timer? _intervalData, _intervalCurrentData;
   bool _loading = false;
   bool get loading => _loading;
   late int _currentGroupID;
@@ -41,7 +41,7 @@ class HomeController extends GetxController {
 
   @override
   void onClose() {
-    _intervalData.cancel();
+    intervalCancel();
   }
 
   void initMap() {
@@ -62,12 +62,12 @@ class HomeController extends GetxController {
   void getDeviceGroup() async {
     _loading = true;
     try {
-      await HomeAPI.getDeviceGroup().then((res) {
+      await DeviceAPI.getDeviceGroup().then((res) {
         listDGroup = List<DeviceGroupModel>.from(
             res.map((e) => DeviceGroupModel.fromJson(e)).toList());
       });
       _currentGroupID = listDGroup[_currentIndexGroup].vehicleGroupID;
-      await HomeAPI.getListDevieStage(_currentGroupID).then((res) {
+      await DeviceAPI.getListDevieStage(_currentGroupID).then((res) {
         var listDState = List<DeviceStageModel>.from(
             res.map((e) => DeviceStageModel.fromJson(e)).toList());
         listDGroup[_currentIndexGroup].listDvStage = listDState;
@@ -108,7 +108,7 @@ class HomeController extends GetxController {
   void setMap() async {
     _loading = true;
     try {
-      await HomeAPI.getListDevieStage(_currentGroupID).then((res) {
+      await DeviceAPI.getListDevieStage(_currentGroupID).then((res) {
         var listDState = List<DeviceStageModel>.from(
             res.map((e) => DeviceStageModel.fromJson(e)).toList());
         _dvStageCurent = listDState[0];
@@ -145,7 +145,7 @@ class HomeController extends GetxController {
 
   void interval() {
     _intervalData = Timer.periodic(Duration(seconds: 20), (timer) async {
-      await HomeAPI.getListDevieStage(_currentGroupID).then((res) async {
+      await DeviceAPI.getListDevieStage(_currentGroupID).then((res) async {
         var listDState = List<DeviceStageModel>.from(
             res.map((e) => DeviceStageModel.fromJson(e)).toList());
 
@@ -158,6 +158,7 @@ class HomeController extends GetxController {
             markers[markerId] = marker.copyWith(
               positionParam: MFLatLng(item.latitude, item.longitude),
             );
+            // debugPrint('${markers[markerId]}');
           }
         }
       });
@@ -165,12 +166,33 @@ class HomeController extends GetxController {
     update();
   }
 
+  void intervalCurrentData(int deviceID) {
+    _intervalCurrentData = Timer.periodic(Duration(seconds: 20), (timer) async {
+      await DeviceAPI.getDevieStageById(deviceID, true).then((res) async {
+        var dCurrent = DeviceStageModel.fromJson(res);
+
+        debugPrint('update marker ${dCurrent.vehicleNumber}');
+        MFMarkerId markerId = MFMarkerId(deviceID.toString());
+        _changePostion(
+            markerId, MFLatLng(dCurrent.latitude, dCurrent.longitude));
+        panelMap(dCurrent);
+      });
+      initMap();
+    });
+  }
+
+  void _changePostion(MFMarkerId markerId, MFLatLng loc) {
+    final MFMarker marker = markers[markerId]!;
+    markers[markerId] = marker.copyWith(positionParam: loc);
+    update();
+  }
+
   void changeCurrentGroup(int vehicleGroupID) {
-    debugPrint('changeCurrentGroup');
     _currentIndexGroup = listDGroup
         .indexWhere((element) => element.vehicleGroupID == vehicleGroupID);
     _currentGroupID = vehicleGroupID;
     markers.clear();
+    intervalCancel();
     setMap();
     update();
   }
@@ -179,7 +201,7 @@ class HomeController extends GetxController {
     _loading = true;
     listDGroup[index].isShow = !listDGroup[index].isShow;
     if (listDGroup[index].listDvStage == null) {
-      await HomeAPI.getListDevieStage(listDGroup[index].vehicleGroupID)
+      await DeviceAPI.getListDevieStage(listDGroup[index].vehicleGroupID)
           .then((res) async {
         var listDState = List<DeviceStageModel>.from(
             res.map((e) => DeviceStageModel.fromJson(e)).toList());
@@ -191,20 +213,22 @@ class HomeController extends GetxController {
     update();
   }
 
-  void setCurentDv(DeviceStageModel dv) {
+  Future<void> setCurentDv(DeviceStageModel dv) async {
+    intervalCancel();
     _dvStageCurent = dv;
     markers.clear();
     // setmap
-    // setMapCurrent(dv);
-    // // init map
-    initMap;
-    debugPrint('');
-
+    await setMapCurrent(dv).then((res) {
+      panelMap(dv);
+      intervalCurrentData(dv.deviceID);
+    });
     update();
   }
 
-  Future<void> setMapCurrent(DeviceStageModel dv) async {
+  Future<MFMarker> setMapCurrent(DeviceStageModel dv) async {
     final MFMarkerId markerId = MFMarkerId(dv.deviceID.toString());
+    moveCamera(dv.latitude, dv.longitude);
+
     MFMarker marker = MFMarker(
         consumeTapEvents: true,
         markerId: markerId,
@@ -212,10 +236,19 @@ class HomeController extends GetxController {
         icon: await MFBitmap.fromAssetImage(
             const ImageConfiguration(), 'assets/icons/car_blue.png'),
         onTap: () {
-          moveCamera(dv.latitude, dv.longitude);
           panelMap(dv);
         });
-    markers[markerId] = marker;
+    return markers[markerId] = marker;
+  }
+
+  void intervalCancel() {
+    debugPrint('--------intervalCancel--------');
+    if (_intervalData != null) {
+      _intervalData!.cancel();
+    }
+    if (_intervalCurrentData != null) {
+      _intervalCurrentData!.cancel();
+    }
   }
   /////////////////////////////////
   ///          4D MAP           //

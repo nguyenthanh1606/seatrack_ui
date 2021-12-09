@@ -15,6 +15,14 @@ class Endpoints {
     return '$KHN_API_URL/device/group?id=$groupId';
   }
 
+  static String getDevieStageById(int deviceId, bool opt) {
+    return '$KHN_API_URL/device/search?id=$deviceId${opt ? '&opt=true' : ''}';
+  }
+
+  static String getDevieStageByVNumber(String verticalNumber) {
+    return '$KHN_API_URL/device/search?vhn=$verticalNumber';
+  }
+
   //////////////////////////////
   //     GROUP DEVICE         //
   //////////////////////////////

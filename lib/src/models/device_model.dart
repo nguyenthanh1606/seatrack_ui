@@ -34,11 +34,11 @@ class DeviceStageModel {
   final int oilvalue;
   final bool statusKey;
   final bool statusDoor;
-  final String in_Out;
-  final bool sleep;
+  final String? in_Out;
+  final bool? sleep;
   final String theDriver;
   final DateTime dateSave;
-  final bool cooler;
+  final bool? cooler;
   final int state;
   final String stateStr;
 
@@ -51,11 +51,11 @@ class DeviceStageModel {
     required this.oilvalue,
     required this.statusKey,
     required this.statusDoor,
-    required this.in_Out,
-    required this.sleep,
+    this.in_Out = "0",
+    this.sleep = false,
     required this.theDriver,
     required this.dateSave,
-    required this.cooler,
+    this.cooler = false,
     required this.state,
     required this.stateStr,
   });
