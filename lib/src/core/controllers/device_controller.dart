@@ -10,6 +10,8 @@ class DeviceController extends GetxController {
   Timer? _intervalData, _intervalCurrentData;
   bool _loading = false;
   bool get loading => _loading;
+  bool _isSearch = false;
+  bool get isSearch => _isSearch;
   late int _currentGroupID;
   int _currentIndexGroup = 0;
   int get currentGroupID => _currentGroupID;
@@ -20,13 +22,11 @@ class DeviceController extends GetxController {
 
   final position = MFCameraPosition(
       bearing: 2.0, target: MFLatLng(10.7553411, 106.4150405), zoom: 6);
-  late MFMapView _map;
-  MFMapView get map => _map;
 
   late MFMapViewController _controller;
 
   late List<DeviceGroupModel> listDGroup;
-  // late List<DeviceStageModel> listDState;
+  List<DeviceLessModel>? searchDv = null;
   late DeviceStageModel? _dvStageCurent;
   DeviceStageModel? get dvStageCurent => _dvStageCurent;
 
@@ -35,28 +35,12 @@ class DeviceController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    initMap();
     getDeviceGroup();
   }
 
   @override
   void onClose() {
     intervalCancel();
-  }
-
-  void initMap() {
-    _map = MFMapView(
-      initialCameraPosition: position,
-      mapType: MFMapType.roadmap,
-      onMapCreated: onMapCreated,
-      onCameraMoveStarted: onCameraMoveStarted,
-      onCameraMove: onCameraMove,
-      onCameraIdle: onCameraIdle,
-      myLocationEnabled: true,
-      myLocationButtonEnabled: true,
-      onTap: onTap,
-      markers: Set<MFMarker>.of(markers.values),
-    );
   }
 
   void getDeviceGroup() async {
@@ -76,27 +60,39 @@ class DeviceController extends GetxController {
       if (listDGroup[_currentIndexGroup].listDvStage != null) {
         for (var item in listDGroup[_currentIndexGroup].listDvStage!) {
           final MFMarkerId markerId = MFMarkerId(item.deviceID.toString());
-          MFMarker marker = MFMarker(
-              consumeTapEvents: true,
-              markerId: markerId,
-              position: MFLatLng(item.latitude, item.longitude),
-              icon: await MFBitmap.fromAssetImage(
-                  const ImageConfiguration(), 'assets/icons/car_blue.png'),
-              onTap: () {
-                moveCamera(item.latitude, item.longitude);
-                panelMap(item);
-              });
-          markers[markerId] = marker;
+          markers[markerId] = await setMarker(markerId, item);
         }
       }
 
-      initMap();
       interval();
     } catch (error) {
       String errorMessage =
           error.toString().substring(error.toString().indexOf(' ') + 1);
       Get.snackbar(
         'Failed to login..',
+        errorMessage,
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    }
+    _loading = false;
+    update();
+  }
+
+  void searchDvByNumber(String vehicleNumber) async {
+    _loading = true;
+    try {
+      await DeviceAPI.getDevieStageByVNumber(vehicleNumber).then((res) {
+        if (res.toString() != "[]") {
+          searchDv = List<DeviceLessModel>.from(
+              res.map((e) => DeviceLessModel.fromJson(e)).toList());
+        }
+        debugPrint(searchDv.toString());
+      });
+    } catch (error) {
+      String errorMessage =
+          error.toString().substring(error.toString().indexOf(' ') + 1);
+      Get.snackbar(
+        'Err ',
         errorMessage,
         snackPosition: SnackPosition.BOTTOM,
       );
@@ -116,19 +112,8 @@ class DeviceController extends GetxController {
       });
       for (var item in listDGroup[_currentIndexGroup].listDvStage!) {
         final MFMarkerId markerId = MFMarkerId(item.deviceID.toString());
-        MFMarker marker = MFMarker(
-            consumeTapEvents: true,
-            markerId: markerId,
-            position: MFLatLng(item.latitude, item.longitude),
-            icon: await MFBitmap.fromAssetImage(
-                const ImageConfiguration(), 'assets/icons/car_blue.png'),
-            onTap: () {
-              moveCamera(item.latitude, item.longitude);
-              panelMap(item);
-            });
-        markers[markerId] = marker;
+        markers[markerId] = await setMarker(markerId, item);
       }
-      initMap();
       interval();
     } catch (error) {
       String errorMessage =
@@ -154,6 +139,7 @@ class DeviceController extends GetxController {
           if (item.state == 3) {
             debugPrint('update marker ${item.vehicleNumber}');
             MFMarkerId markerId = MFMarkerId(item.deviceID.toString());
+
             final MFMarker marker = markers[markerId]!;
             markers[markerId] = marker.copyWith(
               positionParam: MFLatLng(item.latitude, item.longitude),
@@ -161,23 +147,28 @@ class DeviceController extends GetxController {
             // debugPrint('${markers[markerId]}');
           }
         }
+        if (_dvStageCurent != null) {
+          moveCamera(_dvStageCurent!.latitude, _dvStageCurent!.longitude);
+        }
+
+        update();
       });
     });
-    update();
   }
 
   void intervalCurrentData(int deviceID) {
     _intervalCurrentData = Timer.periodic(Duration(seconds: 20), (timer) async {
-      await DeviceAPI.getDevieStageById(deviceID, true).then((res) async {
+      await DeviceAPI.getDevieStageById(deviceID, true).then((res) {
         var dCurrent = DeviceStageModel.fromJson(res);
-
-        debugPrint('update marker ${dCurrent.vehicleNumber}');
-        MFMarkerId markerId = MFMarkerId(deviceID.toString());
-        _changePostion(
-            markerId, MFLatLng(dCurrent.latitude, dCurrent.longitude));
-        panelMap(dCurrent);
+        if (dCurrent != null) {
+          MFMarkerId markerId = MFMarkerId(deviceID.toString());
+          _changePostion(
+              markerId, MFLatLng(dCurrent.latitude, dCurrent.longitude));
+          panelMap(dCurrent);
+          moveCamera(dCurrent.latitude, dCurrent.longitude);
+          update();
+        }
       });
-      initMap();
     });
   }
 
@@ -191,6 +182,7 @@ class DeviceController extends GetxController {
     _currentIndexGroup = listDGroup
         .indexWhere((element) => element.vehicleGroupID == vehicleGroupID);
     _currentGroupID = vehicleGroupID;
+
     markers.clear();
     intervalCancel();
     setMap();
@@ -213,14 +205,19 @@ class DeviceController extends GetxController {
     update();
   }
 
-  Future<void> setCurentDv(DeviceStageModel dv) async {
+  Future<void> setCurentDv(int deviceId) async {
     intervalCancel();
-    _dvStageCurent = dv;
     markers.clear();
+    // get
+    await DeviceAPI.getDevieStageById(deviceId, true).then((res) {
+      _dvStageCurent = DeviceStageModel.fromJson(res);
+      _isSearch = false;
+    });
+
     // setmap
-    await setMapCurrent(dv).then((res) {
-      panelMap(dv);
-      intervalCurrentData(dv.deviceID);
+    await setMapCurrent(_dvStageCurent!).then((res) {
+      panelMap(_dvStageCurent!);
+      intervalCurrentData(deviceId);
     });
     update();
   }
@@ -254,6 +251,20 @@ class DeviceController extends GetxController {
   ///          4D MAP           //
   ///////////////////////////////
 
+  Future<MFMarker> setMarker(MFMarkerId markerId, DeviceStageModel item) async {
+    MFMarker marker = MFMarker(
+        consumeTapEvents: true,
+        markerId: markerId,
+        position: MFLatLng(item.latitude, item.longitude),
+        icon: await MFBitmap.fromAssetImage(
+            const ImageConfiguration(), 'assets/icons/car_blue.png'),
+        onTap: () {
+          moveCamera(item.latitude, item.longitude);
+          panelMap(item);
+        });
+    return marker;
+  }
+
   void panelMap(DeviceStageModel data) {
     _panelPosition = 0;
     _dvStageCurent = data;
@@ -283,6 +294,20 @@ class DeviceController extends GetxController {
 
   void onTap(MFLatLng coordinate) {
     _panelPosition = -120;
+    update();
+  }
+
+  void openSearch() {
+    if (!_isSearch) {
+      markers.clear();
+      intervalCancel();
+      _isSearch = true;
+    }
+    update();
+  }
+
+  void closeSearch() {
+    _isSearch = false;
     update();
   }
 }

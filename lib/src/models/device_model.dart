@@ -65,3 +65,27 @@ class DeviceStageModel {
 
   Map<String, dynamic> toJson() => _$DeviceStageModelToJson(this);
 }
+
+@JsonSerializable()
+class DeviceLessModel {
+  final int deviceID;
+  final String imei;
+  final String nameDevice;
+  final DateTime dateExpired;
+  final String vehicleNumber;
+  final bool qcvn;
+
+  DeviceLessModel({
+    required this.deviceID,
+    required this.imei,
+    required this.nameDevice,
+    required this.dateExpired,
+    required this.vehicleNumber,
+    required this.qcvn,
+  });
+
+  factory DeviceLessModel.fromJson(Map<String, dynamic> json) =>
+      _$DeviceLessModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$DeviceLessModelToJson(this);
+}

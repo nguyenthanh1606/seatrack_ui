@@ -85,7 +85,7 @@ class EndDrawHome extends StatelessWidget {
                                         leading: Icon(Icons.car_rental),
                                         title: Text(dv.vehicleNumber),
                                         onTap: () {
-                                          controller.setCurentDv(dv);
+                                          controller.setCurentDv(dv.deviceID);
                                           Navigator.of(context).pop();
                                         },
                                       );

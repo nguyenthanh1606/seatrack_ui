@@ -41,6 +41,7 @@ class _HomePageState extends State<HomePage> {
         future: getPage(),
         builder: (context, snapshot) {
           return Scaffold(
+            resizeToAvoidBottomInset: false,
             endDrawer: EndDrawHome(),
             body: page!,
           );

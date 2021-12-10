@@ -20,7 +20,20 @@ class DMapPage extends StatelessWidget {
               child: CircularProgressIndicator(),
             )
           : Stack(children: <Widget>[
-              controller.map,
+              controller.isSearch
+                  ? SearchDevice()
+                  : MFMapView(
+                      initialCameraPosition: controller.position,
+                      mapType: MFMapType.roadmap,
+                      onMapCreated: controller.onMapCreated,
+                      onCameraMoveStarted: controller.onCameraMoveStarted,
+                      onCameraMove: controller.onCameraMove,
+                      onCameraIdle: controller.onCameraIdle,
+                      // myLocationEnabled: true,
+                      // myLocationButtonEnabled: true,
+                      onTap: controller.onTap,
+                      markers: Set<MFMarker>.of(controller.markers.values),
+                    ),
               TopBarWidget(),
               PanelMapWidget(),
             ]),

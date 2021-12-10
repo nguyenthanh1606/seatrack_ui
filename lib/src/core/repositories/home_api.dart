@@ -42,4 +42,16 @@ class DeviceAPI {
         Uri.parse(Endpoints.getDevieStageById(deviceId, isOpt)), headers);
     return json.decode(response.body);
   }
+
+  static Future<dynamic> getDevieStageByVNumber(vehicleNumber) async {
+    UserModel? prefsUser = await LocalStorageUser.getUserData();
+    Map<String, String> headers = {
+      'Content-type': 'application/json; charset=utf-8',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer ${prefsUser!.token}',
+    };
+    final response = await getRequest(
+        Uri.parse(Endpoints.getDevieStageByVNumber(vehicleNumber)), headers);
+    return json.decode(response.body);
+  }
 }
