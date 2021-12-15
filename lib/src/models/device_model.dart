@@ -41,6 +41,7 @@ class DeviceStageModel {
   final bool? cooler;
   final int state;
   final String stateStr;
+  DeviceInfoModel? deviceInfo;
 
   DeviceStageModel({
     required this.deviceID,
@@ -58,6 +59,7 @@ class DeviceStageModel {
     this.cooler = false,
     required this.state,
     required this.stateStr,
+    this.deviceInfo = null,
   });
 
   factory DeviceStageModel.fromJson(Map<String, dynamic> json) =>
@@ -88,4 +90,54 @@ class DeviceLessModel {
       _$DeviceLessModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$DeviceLessModelToJson(this);
+}
+
+@JsonSerializable()
+class DeviceInfoModel {
+  final String vehicleGroup;
+  final String simNumberCfg;
+  final String networkNameCfg;
+  final String typeTransportName;
+  final bool isCamera;
+  final int speedLimit;
+  final String vehicleCategory;
+  final String version;
+  final int signalStatusInf;
+  final String networkNameInf;
+  final String serialNumberInf;
+  final String simNumberInf;
+  final DateTime dateSaveLast;
+  final bool isTruth;
+  final String addr;
+  final String imei;
+  final String nameDevice;
+  final String dateExpired;
+  final String id;
+  final bool qcvn;
+  DeviceInfoModel({
+    required this.vehicleGroup,
+    required this.simNumberCfg,
+    required this.networkNameCfg,
+    required this.typeTransportName,
+    required this.isCamera,
+    required this.speedLimit,
+    required this.vehicleCategory,
+    required this.version,
+    required this.signalStatusInf,
+    required this.networkNameInf,
+    required this.serialNumberInf,
+    required this.simNumberInf,
+    required this.dateSaveLast,
+    required this.isTruth,
+    required this.addr,
+    required this.imei,
+    required this.nameDevice,
+    required this.dateExpired,
+    required this.id,
+    required this.qcvn,
+  });
+  factory DeviceInfoModel.fromJson(Map<String, dynamic> json) =>
+      _$DeviceInfoModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$DeviceInfoModelToJson(this);
 }

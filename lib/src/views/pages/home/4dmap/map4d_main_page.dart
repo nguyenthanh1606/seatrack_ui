@@ -6,9 +6,6 @@ import 'package:seatrack_ui/src/core/controllers/device_controller.dart';
 import 'package:seatrack_ui/src/views/pages/home/widgets/_widget.dart';
 
 class DMapPage extends StatelessWidget {
-  Completer<MFMapViewController> _controller = Completer();
-  DMapPage({Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     Get.lazyPut(() => DeviceController());
@@ -19,24 +16,42 @@ class DMapPage extends StatelessWidget {
           ? Center(
               child: CircularProgressIndicator(),
             )
-          : Stack(children: <Widget>[
-              controller.isSearch
-                  ? SearchDevice()
-                  : MFMapView(
-                      initialCameraPosition: controller.position,
-                      mapType: MFMapType.roadmap,
-                      onMapCreated: controller.onMapCreated,
-                      onCameraMoveStarted: controller.onCameraMoveStarted,
-                      onCameraMove: controller.onCameraMove,
-                      onCameraIdle: controller.onCameraIdle,
-                      // myLocationEnabled: true,
-                      // myLocationButtonEnabled: true,
-                      onTap: controller.onTap,
-                      markers: Set<MFMarker>.of(controller.markers.values),
-                    ),
-              TopBarWidget(),
-              PanelMapWidget(),
-            ]),
+          : GestureDetector(
+              onTap: () {
+                FocusScopeNode currentFocus = FocusScope.of(context);
+                if (!currentFocus.hasPrimaryFocus &&
+                    currentFocus.focusedChild != null) {
+                  FocusManager.instance.primaryFocus!.unfocus();
+                }
+              },
+              child: Stack(children: <Widget>[
+                controller.isSearch
+                    ? SearchDevice()
+                    : GestureDetector(
+                        onTap: () {
+                          FocusScopeNode currentFocus = FocusScope.of(context);
+                          if (!currentFocus.hasPrimaryFocus &&
+                              currentFocus.focusedChild != null) {
+                            FocusManager.instance.primaryFocus!.unfocus();
+                          }
+                        },
+                        child: MFMapView(
+                          initialCameraPosition: controller.position,
+                          mapType: MFMapType.roadmap,
+                          onMapCreated: controller.onMapCreated,
+                          onCameraMoveStarted: controller.onCameraMoveStarted,
+                          onCameraMove: controller.onCameraMove,
+                          onCameraIdle: controller.onCameraIdle,
+                          // myLocationEnabled: true,
+                          // myLocationButtonEnabled: true,
+                          onTap: controller.onTap,
+                          markers: Set<MFMarker>.of(controller.markers.values),
+                        ),
+                      ),
+                TopBarWidget(),
+                PanelMapWidget(),
+              ]),
+            ),
     );
   }
 }

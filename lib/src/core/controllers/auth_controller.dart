@@ -50,6 +50,7 @@ class AuthController extends GetxController {
     try {
       await AuthAPI.signInWithUserAndPassword(username!, password!).then((res) {
         debugPrint(res['token'].toString());
+        // debugPrint(res.toString());
         if (res['status'] == 400) {
           throw 'Error Tên đăng nhập hoặc mật khẩu không chính xác';
         } else {

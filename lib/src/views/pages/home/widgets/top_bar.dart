@@ -25,7 +25,7 @@ class TopBarWidget extends StatelessWidget {
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10.0),
                         color: Colors.white),
-                    child: TextField(
+                    child: TextFormField(
                       maxLength: 8,
                       textInputAction: TextInputAction.search,
                       decoration: InputDecoration(
@@ -49,9 +49,6 @@ class TopBarWidget extends StatelessWidget {
                       onTap: () {
                         controller.openSearch();
                         // controller.isSearch = !controller.isSearch;
-                      },
-                      onSubmitted: (value) {
-                        // controller.searchDvByNumber(value);
                       },
                     ),
                   ),

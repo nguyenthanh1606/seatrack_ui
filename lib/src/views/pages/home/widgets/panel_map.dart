@@ -4,10 +4,6 @@ import 'package:seatrack_ui/src/core/controllers/device_controller.dart';
 import 'package:seatrack_ui/src/models/device_model.dart';
 
 class PanelMapWidget extends StatelessWidget {
-  PanelMapWidget({
-    Key? key,
-  }) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return GetBuilder<DeviceController>(

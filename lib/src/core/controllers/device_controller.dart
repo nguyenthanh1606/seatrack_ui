@@ -40,6 +40,7 @@ class DeviceController extends GetxController {
 
   @override
   void onClose() {
+    debugPrint('onClose');
     intervalCancel();
   }
 
@@ -217,6 +218,7 @@ class DeviceController extends GetxController {
     // setmap
     await setMapCurrent(_dvStageCurent!).then((res) {
       panelMap(_dvStageCurent!);
+
       intervalCurrentData(deviceId);
     });
     update();
@@ -224,7 +226,6 @@ class DeviceController extends GetxController {
 
   Future<MFMarker> setMapCurrent(DeviceStageModel dv) async {
     final MFMarkerId markerId = MFMarkerId(dv.deviceID.toString());
-    moveCamera(dv.latitude, dv.longitude);
 
     MFMarker marker = MFMarker(
         consumeTapEvents: true,
@@ -293,12 +294,17 @@ class DeviceController extends GetxController {
   }
 
   void onTap(MFLatLng coordinate) {
+    // FocusScopeNode currentFocus = FocusScope.of(context);
+    // if (!currentFocus.hasPrimaryFocus && currentFocus.focusedChild != null) {
+    //   FocusManager.instance.primaryFocus!.unfocus();
+    // }
     _panelPosition = -120;
     update();
   }
 
   void openSearch() {
     if (!_isSearch) {
+      _panelPosition = -120;
       markers.clear();
       intervalCancel();
       _isSearch = true;
