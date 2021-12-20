@@ -228,8 +228,10 @@ class ListViewCategories extends StatelessWidget {
                     ),
                   ),
                   icon: Icon(Icons.description),
-                  onPressed: () {
-                    Get.to(() => DeviceInfoPage(deviceId: deviceId));
+                  onPressed: () async {
+                    DeviceStageModel deviceInfo =
+                        await controller.getDeviceInfo(deviceId);
+                    Get.to(() => DeviceInfoPage(device: deviceInfo));
                   },
                 ),
                 TextButton.icon(
@@ -253,6 +255,7 @@ class ListViewCategories extends StatelessWidget {
                   ),
                   icon: Icon(Icons.add_road),
                   onPressed: () {
+                    controller.setDeviceReport(deviceId);
                     Get.to(() => ReportHistoryPage());
                   },
                 ),

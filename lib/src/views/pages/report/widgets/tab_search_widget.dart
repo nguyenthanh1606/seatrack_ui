@@ -29,7 +29,7 @@ class TabSearchFirstWidget extends StatelessWidget {
     return GetBuilder<ReportController>(
       init: Get.find<ReportController>(),
       builder: (controller) => DefaultTabController(
-        length: 4, // length of tabs
+        length: 3, // length of tabs
         initialIndex: 0,
         child: Container(
           color: Colors.white,
@@ -42,8 +42,7 @@ class TabSearchFirstWidget extends StatelessWidget {
                 tabs: [
                   Tab(text: 'Hôm nay'),
                   Tab(text: 'Hôm qua'),
-                  Tab(text: 'Tuần này'),
-                  Tab(text: 'Tuần trước'),
+                  Tab(text: 'Khác'),
                 ],
               ),
               Container(
@@ -78,12 +77,15 @@ class TabSearchFirstWidget extends StatelessWidget {
                                 Flexible(
                                   child: TextButton(
                                       onPressed: () {
-                                        DatePicker.showDateTimePicker(context,
+                                        DatePicker.showTimePicker(context,
+                                            currentTime: DateTime.now(),
                                             showTitleActions: true,
                                             // minTime: DateTime(2021, 5, 5, 20, 50),
-                                            maxTime: TProcess.getNow(),
+                                            // maxTime: TProcess.getNow(),
                                             onChanged: (date) {},
                                             onConfirm: (date) {
+                                          debugPrint(date.toString());
+
                                           // setState(() {
                                           //   timeStart = date as DateTime;
                                           // });
@@ -322,13 +324,6 @@ class TabSearchFirstWidget extends StatelessWidget {
                     Container(
                       child: Center(
                         child: Text('Display Tab 3',
-                            style: TextStyle(
-                                fontSize: 22, fontWeight: FontWeight.bold)),
-                      ),
-                    ),
-                    Container(
-                      child: Center(
-                        child: Text('Display Tab 4',
                             style: TextStyle(
                                 fontSize: 22, fontWeight: FontWeight.bold)),
                       ),

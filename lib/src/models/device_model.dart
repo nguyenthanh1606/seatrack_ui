@@ -108,10 +108,10 @@ class DeviceInfoModel {
   final String simNumberInf;
   final DateTime dateSaveLast;
   final bool isTruth;
-  final String addr;
+  final String? addr;
   final String imei;
   final String nameDevice;
-  final String dateExpired;
+  final DateTime dateExpired;
   final String id;
   final bool qcvn;
   DeviceInfoModel({
@@ -129,7 +129,7 @@ class DeviceInfoModel {
     required this.simNumberInf,
     required this.dateSaveLast,
     required this.isTruth,
-    required this.addr,
+    this.addr,
     required this.imei,
     required this.nameDevice,
     required this.dateExpired,

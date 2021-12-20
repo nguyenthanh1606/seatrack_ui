@@ -21,12 +21,14 @@ class DeviceController2 extends GetxController {
   List<DeviceLessModel>? get listSearch => _listSearch;
   DeviceStageModel? _dvStageCurent = null;
   DeviceStageModel? get dvStageCurent => _dvStageCurent;
+  DeviceStageModel? _dvReportCurrent = null;
+  DeviceStageModel? get dvReportCurrent => _dvReportCurrent;
   List<String> _searchTerms = [];
   List<String> get searchTerms => _searchTerms;
   Timer? _intervalData;
 
-  DeviceStageModel? _dvInfo = null;
-  DeviceStageModel? get dvInfo => _dvInfo;
+  DeviceStageModel? _infoDevice = null;
+  DeviceStageModel? get infoDevice => _infoDevice;
 
   @override
   void onInit() {
@@ -89,20 +91,29 @@ class DeviceController2 extends GetxController {
     update();
   }
 
-  void getDeviceInfo(deviceId) async {
+  Future<DeviceStageModel> getDeviceInfo(deviceId) async {
     _loading = true;
+    DeviceStageModel? result = null;
     await DeviceAPI.getDevieStageById(deviceId, true).then((res) async {
-      _dvInfo = DeviceStageModel.fromJson(res);
-      _dvInfo!.deviceInfo = DeviceInfoModel.fromJson(res);
+      result = DeviceStageModel.fromJson(res);
+      result!.deviceInfo = DeviceInfoModel.fromJson(res);
     });
     _loading = false;
     update();
+    return result!;
   }
 
   void setSearch(DeviceStageModel device) {
     // _isSearch = false;
     _dvStageCurent = device;
     update();
+  }
+
+  void setDeviceReport(int deviceId) {
+    _dvReportCurrent = listDGroup[_currentIndexGroup]
+        .listDvStage!
+        .where((element) => element.deviceID == deviceId)
+        .first;
   }
 
   Future<void> changeCurrentGroup(int vehicleGroupID) async {
