@@ -10,6 +10,7 @@ class DMapPage extends StatelessWidget {
   Widget build(BuildContext context) {
     Get.lazyPut(() => DeviceController());
 
+
     return GetBuilder<DeviceController>(
       init: Get.find<DeviceController>(),
       builder: (controller) => controller.loading

@@ -16,7 +16,7 @@ class DeviceController extends GetxController {
   int _currentIndexGroup = 0;
   int get currentGroupID => _currentGroupID;
   int get currentIndexGroup => _currentIndexGroup;
-
+MFBitmap? _markerIcon;
   double _panelPosition = -120;
   double get panelPosition => _panelPosition;
 
@@ -232,13 +232,20 @@ class DeviceController extends GetxController {
         markerId: markerId,
         position: MFLatLng(dv.latitude, dv.longitude),
         icon: await MFBitmap.fromAssetImage(
-            const ImageConfiguration(), 'assets/icons/car_blue.png'),
+            ImageConfiguration(), 'assets/icons/car_blue.png'),
         onTap: () {
           panelMap(dv);
         });
     return markers[markerId] = marker;
   }
-
+Future<void> _createMarkerImageFromAsset(BuildContext context) async {
+    if (_markerIcon == null) {
+      final ImageConfiguration imageConfiguration =
+          createLocalImageConfiguration(context, size: Size.square(48));
+      _markerIcon = await MFBitmap.fromAssetImage(
+          imageConfiguration, 'assets/icons/car_blue.png');
+    }
+  }
   void intervalCancel() {
     debugPrint('--------intervalCancel--------');
     if (_intervalData != null) {
