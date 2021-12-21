@@ -16,7 +16,7 @@ class DeviceController extends GetxController {
   int _currentIndexGroup = 0;
   int get currentGroupID => _currentGroupID;
   int get currentIndexGroup => _currentIndexGroup;
-MFBitmap? _markerIcon;
+  MFBitmap? _markerIcon;
   double _panelPosition = -120;
   double get panelPosition => _panelPosition;
 
@@ -35,6 +35,8 @@ MFBitmap? _markerIcon;
   @override
   void onInit() {
     super.onInit();
+    initMarker();
+    // _createMarkerImageFromAsset(BuildContext context);
     getDeviceGroup();
   }
 
@@ -42,6 +44,14 @@ MFBitmap? _markerIcon;
   void onClose() {
     debugPrint('onClose');
     intervalCancel();
+  }
+
+  Future<void> initMarker() async {
+    if (_markerIcon == null) {
+      _markerIcon = await MFBitmap.fromAssetImage(
+          const ImageConfiguration(), 'assets/icons/car_blue.png');
+    }
+    update();
   }
 
   void getDeviceGroup() async {
@@ -231,21 +241,22 @@ MFBitmap? _markerIcon;
         consumeTapEvents: true,
         markerId: markerId,
         position: MFLatLng(dv.latitude, dv.longitude),
-        icon: await MFBitmap.fromAssetImage(
-            ImageConfiguration(), 'assets/icons/car_blue.png'),
+        icon: _markerIcon!,
         onTap: () {
           panelMap(dv);
         });
     return markers[markerId] = marker;
   }
-Future<void> _createMarkerImageFromAsset(BuildContext context) async {
-    if (_markerIcon == null) {
-      final ImageConfiguration imageConfiguration =
-          createLocalImageConfiguration(context, size: Size.square(48));
-      _markerIcon = await MFBitmap.fromAssetImage(
-          imageConfiguration, 'assets/icons/car_blue.png');
-    }
-  }
+
+  // Future<void> _createMarkerImageFromAsset(BuildContext context) async {
+  //   if (_markerIcon == null) {
+  //     final ImageConfiguration imageConfiguration =
+  //         createLocalImageConfiguration(context, size: Size.square(48));
+  //     _markerIcon = await MFBitmap.fromAssetImage(
+  //         imageConfiguration, 'assets/icons/car_blue.png');
+  //   }
+  // }
+
   void intervalCancel() {
     debugPrint('--------intervalCancel--------');
     if (_intervalData != null) {
@@ -264,8 +275,7 @@ Future<void> _createMarkerImageFromAsset(BuildContext context) async {
         consumeTapEvents: true,
         markerId: markerId,
         position: MFLatLng(item.latitude, item.longitude),
-        icon: await MFBitmap.fromAssetImage(
-            const ImageConfiguration(), 'assets/icons/car_blue.png'),
+        icon: _markerIcon!,
         onTap: () {
           moveCamera(item.latitude, item.longitude);
           panelMap(item);
