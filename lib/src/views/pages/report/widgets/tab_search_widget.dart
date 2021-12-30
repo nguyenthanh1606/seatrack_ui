@@ -3,12 +3,14 @@ import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:seatrack_ui/src/core/controllers/_controller.dart';
+import 'package:seatrack_ui/src/core/controllers/device_controller_2.dart';
 
 class TabSearchWidget extends StatelessWidget {
   const TabSearchWidget({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    Get.put(ReportController());
     return GetBuilder<ReportController>(
       init: Get.find<ReportController>(),
       builder: (controller) =>
@@ -77,22 +79,22 @@ class TabSearchFirstWidget extends StatelessWidget {
                                 Flexible(
                                   child: TextButton(
                                       onPressed: () {
-                                        DatePicker.showTimePicker(context,
-                                            currentTime: DateTime.now(),
+                                        DatePicker.showDateTimePicker(context,
+                                            currentTime:
+                                                controller.start != null
+                                                    ? controller.start
+                                                    : TProcess.getFirstDay(),
                                             showTitleActions: true,
-                                            // minTime: DateTime(2021, 5, 5, 20, 50),
-                                            // maxTime: TProcess.getNow(),
+                                            minTime: DateTime(2021, 1, 1, 0, 0),
+                                            maxTime: controller.end ??
+                                                DateTime.now(),
                                             onChanged: (date) {},
                                             onConfirm: (date) {
-                                          debugPrint(date.toString());
-
-                                          // setState(() {
-                                          //   timeStart = date as DateTime;
-                                          // });
+                                          controller.setDateTime(date, 0);
                                         }, locale: LocaleType.vi);
                                       },
                                       child: Text(
-                                        '${timeStart != null ? timeToString(timeStart!, 1) : timeToString(TProcess.getFirstDay(), 1)}',
+                                        '${controller.start != null ? timeToString(controller.start!, 1) : timeToString(TProcess.getFirstDay(), 1)}',
                                       )),
                                 ),
                               ],
@@ -115,23 +117,20 @@ class TabSearchFirstWidget extends StatelessWidget {
                                   child: TextButton(
                                       onPressed: () {
                                         DatePicker.showDateTimePicker(context,
+                                            currentTime: controller.end != null
+                                                ? controller.end
+                                                : TProcess.getNow(),
                                             showTitleActions: true,
-                                            minTime: timeStart != null
-                                                ? timeStart
-                                                : DateTime(2020, 1, 1, 0, 0),
+                                            minTime: controller.start ??
+                                                DateTime(2021, 01, 01, 0, 0),
                                             maxTime: TProcess.getNow(),
-                                            onChanged: (date) {
-                                          print('change $date in time zone ' +
-                                              date.timeZoneOffset.inHours
-                                                  .toString());
-                                        }, onConfirm: (date) {
-                                          // setState(() {
-                                          //   timeEnd = date;
-                                          // });
+                                            onChanged: (date) {},
+                                            onConfirm: (date) {
+                                          controller.setDateTime(date, 1);
                                         }, locale: LocaleType.vi);
                                       },
                                       child: Text(
-                                        '${timeEnd != null ? timeToString(timeEnd!, 1) : timeToString(TProcess.getNow(), 1)}',
+                                        '${controller.end != null ? timeToString(controller.end!, 1) : timeToString(TProcess.getNow(), 1)}',
                                       )),
                                 ),
                               ],
@@ -155,8 +154,12 @@ class TabSearchFirstWidget extends StatelessWidget {
                                         Scaffold.of(context).openEndDrawer();
                                       },
                                       child: Text(
-                                        '51F9-99999',
-                                        style: TextStyle(color: Colors.blue),
+                                        Get.find<DeviceController2>()
+                                            .dvReportCurrent!
+                                            .vehicleNumber,
+                                        style: TextStyle(
+                                            color:
+                                                Theme.of(context).primaryColor),
                                       )),
                                 ),
                               ],
@@ -168,7 +171,21 @@ class TabSearchFirstWidget extends StatelessWidget {
                               ElevatedButton(
                                 child: Text('Xác nhận'),
                                 onPressed: () {
-                                  controller.toggleSearchSuss();
+                                  if (checkD(
+                                      controller.start!, controller.end!)) {
+                                    controller.getListReportHistory(
+                                        Get.find<DeviceController2>()
+                                            .dvReportCurrent!
+                                            .deviceID);
+                                  } else {
+                                    String message =
+                                        "Quãng thời gian không quá 1 ngày \nVui lòng nhập lại.";
+                                    Get.snackbar(
+                                      'Quá thời gian..',
+                                      message,
+                                      snackPosition: SnackPosition.TOP,
+                                    );
+                                  }
                                 },
                                 style: ElevatedButton.styleFrom(
                                   fixedSize: const Size(120, 40),
@@ -334,6 +351,12 @@ class TabSearchFirstWidget extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  bool checkD(DateTime start, DateTime end) {
+    var dHours = end.difference(start).inHours;
+    if (dHours <= 24) return true;
+    return false;
   }
 }
 

@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:seatrack_ui/src/core/controllers/device_controller_2.dart';
-import 'package:seatrack_ui/src/core/controllers/device_info_controller.dart';
 import 'package:seatrack_ui/src/helper/ulti.dart';
 import 'package:seatrack_ui/src/models/device_model.dart';
 import 'package:seatrack_ui/src/views/widgets/_widgets.dart';
-
-import 'device_edit_info.dart';
 
 class DeviceInfoPage extends StatelessWidget {
   const DeviceInfoPage({Key? key, required this.device}) : super(key: key);

@@ -91,36 +91,10 @@ class _HeaderAuthState extends State<HeaderAuth> {
               Offset(width, _height - 20)
             ]),
           ),
-          Visibility(
-            visible: _showIcon,
-            child: Container(
-              height: _height - 40,
-              child: Center(
-                child: Container(
-                  margin: EdgeInsets.all(20),
-                  padding: EdgeInsets.only(
-                    left: 5.0,
-                    top: 20.0,
-                    right: 5.0,
-                    bottom: 20.0,
-                  ),
-                  decoration: BoxDecoration(
-                    // borderRadius: BorderRadius.circular(20),
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(100),
-                      topRight: Radius.circular(100),
-                      bottomLeft: Radius.circular(60),
-                      bottomRight: Radius.circular(60),
-                    ),
-                    border: Border.all(width: 5, color: Colors.white),
-                  ),
-                  child: Icon(
-                    _icon,
-                    color: Colors.white,
-                    size: 40.0,
-                  ),
-                ),
-              ),
+          SizedBox(
+            height: _height,
+            child: Center(
+              child: Image.asset('assets/images/logo_khn.png', width: 120),
             ),
           ),
         ],

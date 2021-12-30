@@ -9,6 +9,6 @@ setMap(String mapName) async {
 
 Future<String> getMap() async {
   SharedPreferences _prefs = await SharedPreferences.getInstance();
-  String mapName = _prefs.getString(prefMapName) ?? "OpenStreetMap";
+  String mapName = _prefs.getString(prefMapName) ?? "Map4D";
   return mapName;
 }

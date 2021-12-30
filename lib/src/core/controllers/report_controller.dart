@@ -1,30 +1,56 @@
 import 'dart:ui';
 
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
 class ReportController extends GetxController {
   bool _loading = false;
+  DateTime? _start, _end;
+  int? _deviceId;
+  String? _vehicalNumber;
+
   bool get loading => _loading;
+  DateTime? get start => _start;
+  DateTime? get end => _end;
+  int get deviceId => _deviceId!;
+  String get vehicleNumber => _vehicalNumber!;
+
   @override
   void onInit() {
-    print('ReportController onInit');
     super.onInit();
   }
 
   @override
   void onReady() {
-    print('ReportController onReady');
+    debugPrint('ReportController onReady');
     super.onReady();
   }
 
   @override
   void onClose() {
-    print('ReportController onClose');
+    debugPrint('ReportController onClose');
     super.onClose();
   }
 
   void toggleSearchSuss() {
     _loading = !_loading;
+    update();
+  }
+
+  void getListReportHistory(int deviceId) {
+    debugPrint('${_start} - ${_end} \n ${deviceId}');
+  }
+
+  void setDateTime(DateTime dt, int type) {
+    //type 0: start - 1: end
+    switch (type) {
+      case 0:
+        _start = dt;
+        break;
+      case 1:
+        _end = dt;
+        break;
+    }
     update();
   }
 }

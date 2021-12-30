@@ -11,6 +11,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
     return SizedBox(
       child: GetBuilder<ControlViewModel>(
         builder: (controller) => ConvexAppBar(
+          backgroundColor: const Color(0xFF009688),
           initialActiveIndex: controller.navigatorIndex,
           onTap: (index) {
             controller.changeCurrentScreen(index);

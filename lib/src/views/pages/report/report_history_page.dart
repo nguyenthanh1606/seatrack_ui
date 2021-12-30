@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:seatrack_ui/src/core/controllers/report_controller.dart';
-import 'package:seatrack_ui/src/models/device_model.dart';
 import 'package:seatrack_ui/src/views/pages/report/widgets/tab_search_widget.dart';
-import 'package:syncfusion_flutter_maps/maps.dart';
 
 import '../control_page.dart';
 import 'widgets/end_draw_widget.dart';
@@ -20,7 +18,10 @@ class ReportHistoryPage extends StatelessWidget {
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => {Get.to(() => ControlPage())},
+          onPressed: () {
+            Get.delete<ReportController>();
+            Get.to(() => ControlPage());
+          },
         ),
         title: Text('Báo cáo lộ trình'),
         centerTitle: true,

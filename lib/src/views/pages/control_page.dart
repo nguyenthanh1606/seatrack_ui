@@ -20,7 +20,7 @@ class ControlPage extends StatelessWidget {
     //               init: ControlViewModel(),
     //               builder: (controller) => Scaffold(
     //                 body: controller.currentScreen,
-    //                 bottomNavigationBar: CustomBottomNavigationBar(),
+    //                 bottomNavigationBar: const CustomBottomNavigationBar(),
     //               ),
     //             )
     //           : NoInternetConnection();

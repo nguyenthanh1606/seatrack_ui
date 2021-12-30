@@ -12,7 +12,7 @@ class ListTileItemWidget extends StatelessWidget {
     return ListTile(
       minLeadingWidth: 10.0,
       horizontalTitleGap: 5,
-      leading: Icon(iconName, color: Theme.of(context).primaryColor),
+      // leading: Icon(iconName, color: Theme.of(context).primaryColor),
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [

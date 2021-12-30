@@ -42,7 +42,7 @@ class DeviceController extends GetxController {
 
   @override
   void onClose() {
-    debugPrint('onClose');
+    // debugPrint('onClose');
     intervalCancel();
   }
 
@@ -97,7 +97,7 @@ class DeviceController extends GetxController {
           searchDv = List<DeviceLessModel>.from(
               res.map((e) => DeviceLessModel.fromJson(e)).toList());
         }
-        debugPrint(searchDv.toString());
+        // debugPrint(searchDv.toString());
       });
     } catch (error) {
       String errorMessage =
@@ -148,7 +148,7 @@ class DeviceController extends GetxController {
         listDGroup[_currentIndexGroup].listDvStage = listDState;
         for (var item in listDState) {
           if (item.state == 3) {
-            debugPrint('update marker ${item.vehicleNumber}');
+            // debugPrint('update marker ${item.vehicleNumber}');
             MFMarkerId markerId = MFMarkerId(item.deviceID.toString());
 
             final MFMarker marker = markers[markerId]!;
@@ -258,7 +258,7 @@ class DeviceController extends GetxController {
   // }
 
   void intervalCancel() {
-    debugPrint('--------intervalCancel--------');
+    // debugPrint('--------intervalCancel--------');
     if (_intervalData != null) {
       _intervalData!.cancel();
     }

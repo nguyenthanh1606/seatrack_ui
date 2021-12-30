@@ -35,16 +35,8 @@ class LoginPage extends GetView<AuthController> {
                       margin: EdgeInsets.fromLTRB(20, 10, 20, 10),
                       child: Column(
                         children: [
-                          Text(
-                            'welcome'.tr,
-                            style: TextStyle(
-                                fontSize: 60, fontWeight: FontWeight.bold),
-                          ),
-                          Text(
-                            'Signin into your account',
-                            style: TextStyle(color: Colors.grey),
-                          ),
-                          SizedBox(height: 30.0),
+                          Image.asset('assets/images/logo_home.png'),
+                          const SizedBox(height: 30.0),
                           Form(
                             key: _formKey,
                             autovalidateMode:

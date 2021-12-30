@@ -1,0 +1,29 @@
+@TOKEN = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6ImN0eW5ld3Bvc3QiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9zaWQiOiIyODQwNSIsInJvbGUiOiI0IiwibmJmIjoxNjQwNjU4MjEzLCJleHAiOjE2NDA2NjE4MTMsImlhdCI6MTY0MDY1ODIxM30.ZsigoilXfOOgD2oxbQ8P-6oydGOG7dlSYU56EJX3um4
+@URL = http://192.168.2.108:1434/v1.0
+POST {{URL}}/home
+Content-Type: application/json
+
+{
+    "UserName":"ctynewpost",
+    "_Password":"123456"    
+}
+###
+GET {{URL}}/device/group
+content-type: application/json
+Authorization: Bearer {{TOKEN}}
+###
+GET {{URL}}/device/group?id=925
+content-type: application/json
+Authorization: Bearer {{TOKEN}}
+###
+GET {{URL}}/device/search?id=13181&opt=true
+content-type: application/json
+Authorization: Bearer {{TOKEN}}
+###
+GET {{URL}}/device/search?id=13181
+content-type: application/json
+Authorization: Bearer {{TOKEN}}
+###
+GET {{URL}}/device/search?vhn=51D18267
+content-type: application/json
+Authorization: Bearer {{TOKEN}}

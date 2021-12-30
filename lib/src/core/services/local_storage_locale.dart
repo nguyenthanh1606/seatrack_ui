@@ -13,13 +13,13 @@ setLocale(String languageCode, String countryCode) async {
 
 Future<Locale> getLocale() async {
   SharedPreferences _prefs = await SharedPreferences.getInstance();
-  String languageCode = _prefs.getString(prefSelectedLanguageCode) ?? "en";
-  String countryCode = _prefs.getString(prefSelectedCountryCode) ?? "US";
+  String languageCode = _prefs.getString(prefSelectedLanguageCode) ?? "vi";
+  String countryCode = _prefs.getString(prefSelectedCountryCode) ?? "VN";
   return _locale(languageCode, countryCode);
 }
 
 Locale _locale(String? languageCode, String countryCode) {
   return languageCode != null && languageCode.isNotEmpty
       ? Locale(languageCode, countryCode)
-      : Locale('en', 'US');
+      : Locale('vi', 'VN');
 }

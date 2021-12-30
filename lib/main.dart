@@ -2,21 +2,31 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:seatrack_ui/src/core/services/local_storage_app.dart';
+import 'package:seatrack_ui/src/views/widgets/Onboarding/onboarding.dart';
+import 'package:seatrack_ui/src/views/widgets/splash_screen.dart';
 
 import 'src/helper/binding.dart';
 import 'src/core/services/local_storage_locale.dart';
 import 'src/resources/language_translations.dart';
-import 'src/views/pages/control_page.dart';
 import 'src/views/themes/app_theme.dart';
 
 Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: Colors.transparent,
   ));
-  runApp(MyApp());
+
+  bool shortScreen = await getScreenStart();
+
+  runApp(MyApp(shortScreen: shortScreen));
 }
 
 class MyApp extends StatefulWidget {
+  bool shortScreen;
+
+  MyApp({Key? key, required this.shortScreen}) : super(key: key);
+
   @override
   _MyAppState createState() => _MyAppState();
 }
@@ -49,9 +59,14 @@ class _MyAppState extends State<MyApp> {
           // darkTheme: AppTheme.dark,
           // themeMode: ThemeMode.system,
           theme: ThemeData(
-            primarySwatch: Colors.blue,
+            // primaryColor: Color(0XFF9effff),
+            primaryColor: Color(0XFF008e76),
+            accentColor: Color(0XFF9effff),
+            primarySwatch: Colors.teal,
           ),
-          home: ControlPage(),
+          home: widget.shortScreen
+              ? const Onboarding(screenHeight: 600)
+              : const SplashScreen(),
           debugShowCheckedModeBanner: false,
           title: 'Seatrack KHN',
         ),

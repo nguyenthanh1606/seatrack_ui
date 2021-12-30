@@ -114,6 +114,7 @@ class DeviceController2 extends GetxController {
         .listDvStage!
         .where((element) => element.deviceID == deviceId)
         .first;
+    update();
   }
 
   Future<void> changeCurrentGroup(int vehicleGroupID) async {

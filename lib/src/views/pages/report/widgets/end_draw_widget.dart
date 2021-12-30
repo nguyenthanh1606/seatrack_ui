@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:seatrack_ui/src/core/controllers/device_controller_2.dart';
 
 class EndDrawReport extends StatefulWidget {
   const EndDrawReport({Key? key}) : super(key: key);
@@ -43,10 +45,10 @@ class _EndDrawReportState extends State<EndDrawReport> {
                             onPressed: () {},
                             iconSize: 30.0,
                           )),
-                      onChanged: (val) {
-                        setState(() {});
+                      onChanged: (val) {},
+                      onSubmitted: (term) {
+                        Get.find<DeviceController2>().searchDvByNumber(term);
                       },
-                      onSubmitted: (term) {},
                     ),
                   ),
                 ),
@@ -55,7 +57,7 @@ class _EndDrawReportState extends State<EndDrawReport> {
                   child: ListView.builder(
                     scrollDirection: Axis.vertical,
                     shrinkWrap: true,
-                    itemCount: 2,
+                    itemCount: 5,
                     itemBuilder: (BuildContext context, int index) {
                       return Card(
                         child: Column(
