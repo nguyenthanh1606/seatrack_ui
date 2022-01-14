@@ -106,7 +106,7 @@ class DevicePageState extends State<DevicePage>
             ];
           },
           body: controller.loading
-              ? Center(
+              ? const Center(
                   child: CircularProgressIndicator(),
                 )
               : TabBarView(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:seatrack_ui/src/core/controllers/device_controller.dart';
 import 'package:seatrack_ui/src/core/repositories/authentication_api.dart';
 import 'package:seatrack_ui/src/core/repositories/user_api.dart';
 import 'package:seatrack_ui/src/core/services/local_storage_user.dart';

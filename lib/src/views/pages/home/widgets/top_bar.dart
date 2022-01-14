@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:seatrack_ui/src/core/controllers/device_controller.dart';
+import 'package:seatrack_ui/src/core/controllers/device_controller_old.dart';
 
 class TopBarWidget extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:seatrack_ui/src/core/controllers/device_controller.dart';
+import 'package:seatrack_ui/src/core/controllers/device_controller_old.dart';
 import 'package:seatrack_ui/src/models/device_model.dart';
 
 class StartDrawHome extends StatelessWidget {

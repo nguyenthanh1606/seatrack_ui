@@ -116,10 +116,10 @@ class BuildDeviceItem extends StatelessWidget {
             const Text(
                 '184/1 Nguyễn Văn Khối, phường 9, quận Gò Vấp, tp Hồ Chí Minh',
                 style: TextStyle(color: Color(0XFF757575))),
-            Padding(
-              padding: const EdgeInsets.only(top: 8.0),
-              child: ListIconDevice(device: device),
-            ),
+            // Padding(
+            //   padding: const EdgeInsets.only(top: 8.0),
+            //   child: ListIconDevice(device: device),
+            // ),
             ListViewCategories(device.deviceID),
           ],
         ),

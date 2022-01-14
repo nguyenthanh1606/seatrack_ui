@@ -2,14 +2,13 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:map4d_map/map4d_map.dart';
-import 'package:seatrack_ui/src/core/controllers/device_controller.dart';
+import 'package:seatrack_ui/src/core/controllers/device_controller_old.dart';
 import 'package:seatrack_ui/src/views/pages/home/widgets/_widget.dart';
 
 class DMapPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Get.lazyPut(() => DeviceController());
-
 
     return GetBuilder<DeviceController>(
       init: Get.find<DeviceController>(),

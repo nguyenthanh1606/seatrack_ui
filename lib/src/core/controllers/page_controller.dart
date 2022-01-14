@@ -16,23 +16,19 @@ class ControlViewModel extends GetxController {
     _navigatorIndex = index;
     switch (index) {
       case 0:
-        _currentScreen = const AlterPage();
-        Get.delete<DeviceController>();
+        _currentScreen = AlterPage();
         break;
       case 1:
         _currentScreen = const DevicePage();
-        Get.delete<DeviceController>();
         break;
       case 2:
         _currentScreen = const HomePage();
         break;
       case 3:
         _currentScreen = const ProfilePage();
-        Get.delete<DeviceController>();
         break;
       case 4:
         _currentScreen = const MenuPage();
-        Get.delete<DeviceController>();
         break;
     }
     update();
