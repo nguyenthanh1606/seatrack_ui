@@ -37,8 +37,35 @@ class ReportController extends GetxController {
     update();
   }
 
-  void getListReportHistory(int deviceId) {
-    debugPrint('${_start} - ${_end} \n ${deviceId}');
+  void getListReportHistory(int deviceId, int type) {
+    switch (type) {
+      case 0:
+        {
+          _end = DateTime.now();
+          _start = _end!.subtract(Duration(hours: 4));
+          debugPrint('${_start} - ${_end} \n ${deviceId}');
+          break;
+        }
+      case 1:
+        {
+          _end = DateTime.now();
+          _start = _end!.subtract(Duration(hours: 8));
+          debugPrint('${_start} - ${_end} \n ${deviceId}');
+          break;
+        }
+      case 2:
+        {
+          _end = DateTime.now();
+          _start = _end!.subtract(Duration(days: 1));
+          debugPrint('${_start} - ${_end} \n ${deviceId}');
+          break;
+        }
+      case 3:
+        {
+          debugPrint('${_start} - ${_end} \n ${deviceId}');
+          break;
+        }
+    }
   }
 
   void setDateTime(DateTime dt, int type) {

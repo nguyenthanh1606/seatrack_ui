@@ -5,9 +5,8 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:seatrack_ui/src/core/controllers/device_controller.dart';
 import 'package:seatrack_ui/src/core/controllers/gmap_controller.dart';
+import 'package:seatrack_ui/src/helper/ulti.dart';
 import 'package:seatrack_ui/src/models/device_model.dart';
-
-import 'coffee_model.dart';
 
 class GMapPage extends StatefulWidget {
   const GMapPage({Key? key}) : super(key: key);
@@ -17,17 +16,11 @@ class GMapPage extends StatefulWidget {
 }
 
 class _GMapPageState extends State<GMapPage> {
-  int prevPage = 0;
-  // List<DeviceStageModel> listDvStage = Get.find<DeviceController>().lDeviceStage;
-
-  late PageController _pageController;
   @override
   void initState() {
+    // ignore: todo
     // TODO: implement initState
     super.initState();
-
-    _pageController = PageController(initialPage: 0, viewportFraction: 0.8)
-      ..addListener(_onScroll);
   }
 
   @override
@@ -36,146 +29,461 @@ class _GMapPageState extends State<GMapPage> {
 
     return GetBuilder<GMapController>(
       init: Get.find<GMapController>(),
-      builder: (controller) => controller.loading
-          ? const Center(
-              child: CircularProgressIndicator(),
-            )
-          : Stack(
-              children: <Widget>[
-                Container(
-                  height: MediaQuery.of(context).size.height - 50.0,
-                  width: MediaQuery.of(context).size.width,
-                  child: GoogleMap(
-                    initialCameraPosition: controller.position,
-                    markers: Set.from(controller.allMarkers),
-                    onMapCreated: controller.mapCreated,
-                  ),
-                ),
-                Positioned(
-                  bottom: 20.0,
-                  child: Container(
-                    height: 150.0,
+      builder: (controller) => Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+            onPressed: () {
+              controller.openSearch();
+              showSearch(
+                context: context,
+                delegate: CustomSearchDelegate(),
+              );
+            },
+            icon: const Icon(Icons.search),
+          ),
+          actions: <Widget>[
+            // PopupMenuButton(
+            //   itemBuilder: (context) => controller.listDGroup
+            //       .map(
+            //         (e) => PopupMenuItem(
+            //           child: Text("${e.vehicleGroup} (${e.countdv})"),
+            //           value: controller.listDGroup.indexOf(e),
+            //           onTap: () {
+            //             controller.closeSearch();
+
+            //             controller.changeCurrentGroup(e.vehicleGroupID);
+            //           },
+            //         ),
+            //       )
+            //       .toList(),
+            // ),
+          ],
+          title: Text(
+              (controller.title == "" ? 'Danh sách xe' : controller.title)
+                  .toUpperCase()),
+          centerTitle: true,
+        ),
+        body: controller.loading
+            ? const Center(
+                child: CircularProgressIndicator(),
+              )
+            : Stack(
+                children: <Widget>[
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height - 50.0,
                     width: MediaQuery.of(context).size.width,
-                    child: PageView.builder(
-                      controller: _pageController,
-                      itemCount:
-                          Get.find<DeviceController>().lDeviceStage.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return _deviceList(index);
-                      },
+                    child: GoogleMap(
+                      initialCameraPosition: controller.position,
+                      markers: Set.from(controller.allMarkers),
+                      onMapCreated: controller.mapCreated,
+                      onCameraMove: controller.onGeoChanged,
                     ),
                   ),
-                )
-              ],
-            ),
-    );
-  }
-
-  void _onScroll() {
-    if (_pageController.page!.toInt() != prevPage) {
-      prevPage = _pageController.page!.toInt();
-      Get.find<GMapController>().moveCamera(LatLng(
-          Get.find<DeviceController>()
-              .lDeviceStage[_pageController.page!.toInt()]
-              .latitude,
-          Get.find<DeviceController>()
-              .lDeviceStage[_pageController.page!.toInt()]
-              .longitude));
-    }
-  }
-
-  _deviceList(index) {
-    return AnimatedBuilder(
-      animation: _pageController,
-      builder: (BuildContext context, Widget? widget) {
-        double value = 1;
-        if (_pageController.position.haveDimensions) {
-          value = (_pageController.page! - index);
-          value = (1 - (value.abs() * 0.3) + 0.06).clamp(0.0, 1.0);
-        }
-        return Center(
-          child: SizedBox(
-            height: Curves.easeInOut.transform(value) * 125.0,
-            width: Curves.easeInOut.transform(value) * 350.0,
-            child: widget,
-          ),
-        );
-      },
-      child: InkWell(
-        onTap: () {
-          debugPrint(_pageController.page!.toString());
-          _onScroll();
-          // moveCamera();
-        },
-        child: Stack(
-          children: [
-            Center(
-              child: Container(
-                margin: EdgeInsets.symmetric(
-                  horizontal: 10.0,
-                  vertical: 20.0,
-                ),
-                height: 125.0,
-                width: 275.0,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10.0),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black54,
-                        offset: Offset(0.0, 4.0),
-                        blurRadius: 10.0,
-                      ),
-                    ]),
-                child: Container(
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10.0),
-                      color: Colors.white),
-                  child: Row(
-                    children: [
-                      Wrap(
-                        children: [
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                Get.find<DeviceController>()
-                                    .lDeviceStage[index]
-                                    .vehicleNumber,
-                                style: TextStyle(
-                                    fontSize: 12.5,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              Text(
-                                Get.find<DeviceController>()
-                                    .lDeviceStage[index]
-                                    .dateSave
-                                    .toString(),
-                                style: TextStyle(
-                                    fontSize: 12.0,
-                                    fontWeight: FontWeight.w600),
-                              ),
-                              Container(
-                                width: 170.0,
-                                child: Text(
-                                  Get.find<DeviceController>()
-                                      .lDeviceStage[index]
-                                      .stateStr,
-                                  style: TextStyle(
-                                      fontSize: 11.0,
-                                      fontWeight: FontWeight.w300),
-                                ),
+                  Positioned(
+                    right: 12,
+                    top: 20,
+                    child: Column(
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.5),
+                                spreadRadius: 5,
+                                blurRadius: 7,
+                                offset: const Offset(
+                                    0, 3), // changes position of shadow
                               ),
                             ],
                           ),
-                        ],
+                          child: IconButton(
+                            padding: const EdgeInsets.all(8),
+                            icon: Image.asset('assets/themes/icons/layers.png',
+                                width: 30),
+                            onPressed: () {},
+                          ),
+                        ),
+                        SizedBox(height: 12),
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.5),
+                                spreadRadius: 5,
+                                blurRadius: 7,
+                                offset: const Offset(
+                                    0, 3), // changes position of shadow
+                              ),
+                            ],
+                          ),
+                          child: IconButton(
+                            padding: const EdgeInsets.all(8),
+                            icon: Image.asset(
+                                'assets/themes/icons/point-objects.png',
+                                width: 30),
+                            onPressed: () {},
+                          ),
+                        ),
+                        SizedBox(height: 12),
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.5),
+                                spreadRadius: 5,
+                                blurRadius: 7,
+                                offset: const Offset(
+                                    0, 3), // changes position of shadow
+                              ),
+                            ],
+                          ),
+                          child: IconButton(
+                            padding: const EdgeInsets.all(8),
+                            icon: Image.asset(
+                                'assets/themes/icons/dome-camera.png',
+                                width: 30),
+                            onPressed: () {},
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Positioned(
+                    bottom: 20.0,
+                    child: Container(
+                      height: 150.0,
+                      width: MediaQuery.of(context).size.width,
+                      child: PageView.builder(
+                        controller: controller.pageController,
+                        itemCount:
+                            Get.find<DeviceController>().lDeviceStage.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return _deviceList(index);
+                        },
                       ),
-                    ],
+                    ),
+                  )
+                ],
+              ),
+      ),
+    );
+  }
+
+  _deviceList(index) {
+    final DeviceStageModel device =
+        Get.find<DeviceController>().lDeviceStage[index];
+
+    return GetBuilder<GMapController>(
+      init: Get.find<GMapController>(),
+      builder: (controller) => AnimatedBuilder(
+        animation: controller.pageController,
+        builder: (BuildContext context, Widget? widget) {
+          double value = 1;
+          if (controller.pageController.position.haveDimensions) {
+            value = (controller.pageController.page! - index);
+            value = (1 - (value.abs() * 0.3) + 0.06).clamp(0.0, 1.0);
+          }
+          return Center(
+            child: SizedBox(
+              height: Curves.easeInOut.transform(value) * 130.0,
+              width: Curves.easeInOut.transform(value) * 350.0,
+              child: widget,
+            ),
+          );
+        },
+        child: InkWell(
+          onTap: () {
+            // Get.find<GMapController>()
+            //     .setIndexDevice(_pageController.page!.toInt());
+
+            // Get.find<GMapController>().moveCamera(LatLng(
+            //     Get.find<DeviceController>()
+            //         .lDeviceStage[_pageController.page!.toInt()]
+            //         .latitude,
+            //     Get.find<DeviceController>()
+            //         .lDeviceStage[_pageController.page!.toInt()]
+            //         .longitude));
+          },
+          child: Stack(
+            children: [
+              Center(
+                child: Container(
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 10.0,
+                    vertical: 20.0,
+                  ),
+                  height: 130.0,
+                  width: 275.0,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10.0),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Colors.black54,
+                          offset: Offset(0.0, 4.0),
+                          blurRadius: 10.0,
+                        ),
+                      ]),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 5.0, horizontal: 15.0),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10.0),
+                        color: Colors.white),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          device.vehicleNumber,
+                          style: TextStyle(
+                              fontSize: 12.5,
+                              fontWeight: FontWeight.bold,
+                              color: statusColor(device.state)),
+                        ),
+                        Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                device.stateStr.toString(),
+                                style: const TextStyle(fontSize: 11.0),
+                              ),
+                              Text(
+                                timeToString(device.dateSave).toString(),
+                                style: const TextStyle(fontSize: 11.0),
+                              ),
+                            ]),
+                        Text(
+                          device.addr! == 'khong xac dinh'
+                              ? (device.latitude.toString() +
+                                  "," +
+                                  device.longitude.toString())
+                              : (device.addr! != ""
+                                  ? device.addr!
+                                  : device.latitude.toString() +
+                                      "," +
+                                      device.longitude.toString()),
+                          // '184/1 Nguyễn Văn Khối, Phường 9, Q Gò Vấp, Tp Hồ Chí Minh ',
+                          style: TextStyle(fontSize: 11.0),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class CustomSearchDelegate extends SearchDelegate {
+  List<String> searchTerms = Get.find<GMapController>().searchTerms;
+  @override
+  List<Widget> buildActions(BuildContext context) {
+    return [
+      IconButton(
+        icon: const Icon(Icons.clear),
+        onPressed: () {
+          query = '';
+        },
+      ),
+    ];
+  }
+
+  @override
+  Widget buildLeading(BuildContext context) {
+    return IconButton(
+      icon: const Icon(Icons.arrow_back),
+      onPressed: () {
+        Get.find<GMapController>().closeSearch();
+        close(context, null);
+      },
+    );
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    debugPrint('buildResults');
+    List<DeviceStageModel> matchQuery = [];
+    List<DeviceStageModel> listDvStage =
+        Get.find<DeviceController>().lDeviceStage;
+    for (var item2 in listDvStage) {
+      if (item2.vehicleNumber.toLowerCase().contains(query.toLowerCase())) {
+        matchQuery.add(item2);
+      }
+    }
+    if (matchQuery.length == 0)
+      return Container(
+          child: Center(child: Text('Không tìm thấy thông tin xe...')));
+
+    return ListView.builder(
+        itemCount: matchQuery.length,
+        itemBuilder: (context, index) {
+          var result = matchQuery[index];
+          // return SearchItemWiget(
+          //   value: result,
+          //   fnClose: () {
+          //     close(context, null);
+          //   },
+          // );
+          return Card(
+            child: InkWell(
+              onTap: () {
+                Get.find<GMapController>().setSearch(result);
+                close(context, null);
+                ;
+              },
+              child: Padding(
+                padding: EdgeInsets.all(10),
+                child: Row(
+                  children: [
+                    CircleAvatar(
+                        child: Icon(Icons.directions_car, color: Colors.white),
+                        backgroundColor: statusColor(result.state)),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Container(
+                      height: 40,
+                      width: 2,
+                      color: statusColor(result.state),
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      result.vehicleNumber,
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          color: statusColor(result.state)),
+                    ),
+                  ],
+                ),
+              ),
             ),
-          ],
+          );
+        });
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    debugPrint('buildSuggestions');
+    List<DeviceStageModel> matchQuery = [];
+    List<DeviceStageModel> listDvStage =
+        Get.find<DeviceController>().lDeviceStage;
+    for (var item2 in listDvStage) {
+      if (item2.vehicleNumber.toLowerCase().contains(query.toLowerCase())) {
+        matchQuery.add(item2);
+      }
+    }
+    if (matchQuery.isEmpty) {
+      return const Center(child: Text('Không tìm thấy thông tin xe...'));
+    } else {
+      return ListView.builder(
+        itemCount: matchQuery.length,
+        itemBuilder: (context, index) {
+          var result = matchQuery[index];
+          // return SearchItemWiget(
+          //   value: result,
+          //   fnClose: () {
+          //     close(context, null);
+          //   },
+          // );
+          return Card(
+            child: InkWell(
+              onTap: () {
+                Get.find<GMapController>().setSearch(result);
+                close(context, null);
+              },
+              child: Padding(
+                padding: EdgeInsets.all(10),
+                child: Row(
+                  children: [
+                    CircleAvatar(
+                        child: Icon(Icons.directions_car, color: Colors.white),
+                        backgroundColor: statusColor(result.state)),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Container(
+                      height: 40,
+                      width: 2,
+                      color: statusColor(result.state),
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      result.vehicleNumber,
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          color: statusColor(result.state)),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      );
+    }
+  }
+}
+
+class SearchItemWiget extends StatelessWidget {
+  SearchItemWiget({Key? key, required this.value, required this.fnClose})
+      : super(key: key);
+  var value;
+  VoidCallback fnClose;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: InkWell(
+        onTap: () {
+          Get.find<GMapController>().setSearch(value);
+          fnClose;
+        },
+        child: Padding(
+          padding: EdgeInsets.all(10),
+          child: Row(
+            children: [
+              CircleAvatar(
+                  child: Icon(Icons.directions_car, color: Colors.white),
+                  backgroundColor: statusColor(value.state)),
+              const SizedBox(
+                width: 10,
+              ),
+              Container(
+                height: 40,
+                width: 2,
+                color: statusColor(value.state),
+              ),
+              const SizedBox(
+                width: 10,
+              ),
+              Text(
+                value.vehicleNumber,
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: statusColor(value.state)),
+              ),
+            ],
+          ),
         ),
       ),
     );

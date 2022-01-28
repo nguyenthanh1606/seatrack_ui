@@ -1,44 +1,44 @@
-List<Map<String, String>> _sts_ = [
+List<Map<String, String>> CAR_MARKER = [
   {
     "name": "Không xác định",
-    "menucon": "car_red.png",
-    "polycon": "car_red.png",
+    "mapIcon": "assets/icons/car-stop.png",
+    "image": "assets/car_red.png",
     "color": "red"
   },
   {
     "name": "Chưa có dữ liệu",
-    "menucon": "car_red.png",
-    "polycon": "car_red.png",
+    "mapIcon": "assets/icons/car-stop.png",
+    "image": "assets/icons/car_red.png",
     "color": "red"
   },
   {
     "name": "Mất liên lạc",
-    "menucon": "car_red.png",
-    "polycon": "car_red.png",
+    "mapIcon": "assets/icons/car-stop.png",
+    "image": "assets/icons/car_red.png",
     "color": "red"
   },
   {
     "name": "Hoạt động",
-    "menucon": "car_green.png",
-    "polycon": "car_green.png",
+    "mapIcon": "assets/icons/car-run.png",
+    "image": "assets/icons/car_green.png",
     "color": "green"
   },
   {
     "name": "Dừng",
-    "menucon": "car_gray.png",
-    "polycon": "car_gray.png",
+    "mapIcon": "assets/icons/car-pause.png",
+    "image": "assets/icons/car_gray.png",
     "color": "gray"
   },
   {
     "name": "Hết hạn dịch vụ",
-    "menucon": "car_red.png",
-    "polycon": "car_red.png",
+    "mapIcon": "assets/icons/car-stop.png",
+    "image": "assets/icons/car_red.png",
     "color": "red"
   },
   {
     "name": "Mất GPS",
-    "menucon": "car_red.png",
-    "polycon": "car_red.png",
+    "mapIcon": "assets/icons/car-gps.png",
+    "image": "assets/icons/car-yellow.png",
     "color": "red"
   },
 ];

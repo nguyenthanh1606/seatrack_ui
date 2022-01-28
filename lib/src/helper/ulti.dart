@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:seatrack_ui/src/views/themes/_themes.dart';
 
 Color statusColor(int statusId) {
@@ -107,4 +108,10 @@ String timeDevice(DateTime? d1) {
     }
   }
   return '0';
+}
+
+String timeToString(DateTime dt) {
+  var formatter = DateFormat('dd-MM-yyyy HH:mm:ss');
+
+  return formatter.format(dt);
 }

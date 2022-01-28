@@ -30,6 +30,8 @@ class DeviceStageModel {
   final String vehicleNumber;
   final double latitude;
   final double longitude;
+  final double? latitude_last;
+  final double? longitude_last;
   final double speed;
   final int oilvalue;
   final bool statusKey;
@@ -41,6 +43,7 @@ class DeviceStageModel {
   final bool? cooler;
   final int state;
   final String stateStr;
+  final String? addr;
   DeviceInfoModel? deviceInfo;
 
   DeviceStageModel({
@@ -48,6 +51,8 @@ class DeviceStageModel {
     required this.vehicleNumber,
     required this.latitude,
     required this.longitude,
+    this.latitude_last = 0.0,
+    this.longitude_last = 0.0,
     required this.speed,
     required this.oilvalue,
     required this.statusKey,
@@ -59,6 +64,7 @@ class DeviceStageModel {
     this.cooler = false,
     required this.state,
     required this.stateStr,
+    this.addr,
     this.deviceInfo = null,
   });
 

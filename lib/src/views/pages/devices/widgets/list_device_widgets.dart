@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:seatrack_ui/src/core/controllers/device_controller.dart';
 import 'package:seatrack_ui/src/core/controllers/device_controller_2.dart';
 import 'package:seatrack_ui/src/helper/ulti.dart';
 import 'package:seatrack_ui/src/models/device_model.dart';
+import 'package:seatrack_ui/src/views/pages/home/gmap/map_focus_demo.dart';
 import 'package:seatrack_ui/src/views/pages/report/report_history_page.dart';
 import 'package:seatrack_ui/src/views/themes/_themes.dart';
 
@@ -26,16 +28,33 @@ class _ListDeviceWidgetState extends State<ListDeviceWidget> {
   Widget build(
     BuildContext context,
   ) {
-    return GetBuilder<DeviceController2>(
+    return GetBuilder<DeviceController>(
       builder: (controller) => RefreshIndicator(
         onRefresh: () {
           return controller.getListDVStage();
         },
-        child: ListView(
-          padding: const EdgeInsets.all(8),
-          children: widget.devices
-              .map((device) => BuildDeviceItem(device: device))
-              .toList(),
+        child: Column(
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Center(
+                child: Text(
+                  'Tổng số xe: ' + widget.devices.length.toString(),
+                  style: const TextStyle(
+                    color: Color(0XFF757575),
+                  ),
+                ),
+              ),
+            ),
+            Expanded(
+              child: ListView(
+                padding: const EdgeInsets.all(8),
+                children: widget.devices
+                    .map((device) => BuildDeviceItem(device: device))
+                    .toList(),
+              ),
+            )
+          ],
         ),
       ),
     );
@@ -55,72 +74,76 @@ class BuildDeviceItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
+        padding: const EdgeInsets.fromLTRB(12, 8, 8, 12),
         child: Column(
           mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            ListTile(
-                leading: Image.asset('assets/themes/icons/car.png', height: 40),
-                // leading: CircleAvatar(
-                //   backgroundColor: Colors.transparent,
-                //   radius: 30,
-                //   child: Icon(Icons.local_taxi,
-                //       size: 40,
-                //       color: statusColor(device.state)),
-                // ),
-                title: Text(
-                  '◉ ${device.vehicleNumber.toString()}',
-                  style: TextStyle(
-                      color: statusColor(device.state),
-                      fontSize: 15,
-                      fontWeight: FontWeight.w500),
-                ),
-                subtitle: Padding(
-                  padding: const EdgeInsets.only(top: 8.0),
-                  child: Text(new DateFormat('HH:mm:ss dd-MM-yyyy')
-                      .format(device.dateSave)),
-                ),
-                trailing: Column(children: <Widget>[
-                  Container(
-                    padding: EdgeInsets.fromLTRB(10, 4, 10, 4),
-                    decoration: BoxDecoration(
-                      color: statusColor(device.state),
-                    ),
-                    child: Column(
-                      children: <Widget>[
-                        SizedBox(
-                          child: Text(
-                            statusString(device.state, device.dateSave)
-                                .toUpperCase(),
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16),
-                          ),
-                        ),
-                        SizedBox(
-                          child: Text(
-                            device.state == 3
-                                ? '${device.speed.toString()} Km/h'
-                                : timeDevice(device.dateSave),
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 12),
-                          ),
-                        ),
-                      ],
-                    ),
+            InkWell(
+              onTap: () {
+                Get.find<DeviceController>().setDeviceState(device);
+                Get.to(() => GMapFocus(device: device));
+              },
+              child: ListTile(
+                  leading:
+                      Image.asset('assets/themes/icons/car.png', height: 40),
+                  // leading: CircleAvatar(
+                  //   backgroundColor: Colors.transparent,
+                  //   radius: 30,
+                  //   child: Icon(Icons.local_taxi,
+                  //       size: 40,
+                  //       color: statusColor(device.state)),
+                  // ),
+                  title: Text(
+                    '◉ ${device.vehicleNumber.toString()}',
+                    style: TextStyle(
+                        color: statusColor(device.state),
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500),
                   ),
-                ])),
-            const Text(
-                '184/1 Nguyễn Văn Khối, phường 9, quận Gò Vấp, tp Hồ Chí Minh',
+                  subtitle: Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Text(new DateFormat('HH:mm:ss dd-MM-yyyy')
+                        .format(device.dateSave)),
+                  ),
+                  trailing: Column(children: <Widget>[
+                    Container(
+                      padding: EdgeInsets.fromLTRB(10, 4, 10, 4),
+                      decoration: BoxDecoration(
+                        color: statusColor(device.state),
+                      ),
+                      child: Column(
+                        children: <Widget>[
+                          SizedBox(
+                            child: Text(
+                              statusString(device.state, device.dateSave)
+                                  .toUpperCase(),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16),
+                            ),
+                          ),
+                          SizedBox(
+                            child: Text(
+                              device.state == 3
+                                  ? '${device.speed.toString()} Km/h'
+                                  : timeDevice(device.dateSave),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ])),
+            ),
+            Text(device.addr!,
+                textAlign: TextAlign.left,
                 style: TextStyle(color: Color(0XFF757575))),
-            // Padding(
-            //   padding: const EdgeInsets.only(top: 8.0),
-            //   child: ListIconDevice(device: device),
-            // ),
-            ListViewCategories(device.deviceID),
+            // ListViewCategories(device.deviceID),
           ],
         ),
       ),
@@ -133,7 +156,7 @@ class ListViewCategories extends StatelessWidget {
   final int deviceId;
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<DeviceController2>(
+    return GetBuilder<DeviceController>(
       builder: (controller) => Stack(
         children: <Widget>[
           Padding(

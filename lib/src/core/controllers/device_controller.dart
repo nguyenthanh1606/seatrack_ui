@@ -12,21 +12,27 @@ class DeviceController extends GetxController {
   late List<DeviceGroupModel> listGroup;
   late List<DeviceStageModel> _lDeviceStage;
   List<DeviceStageModel> get lDeviceStage => _lDeviceStage;
-  late DeviceStageModel _deviceStage;
+  DeviceStageModel? _deviceStage;
+  DeviceStageModel? get deviceStage => _deviceStage;
+  DeviceStageModel? _dvReportCurrent;
+  DeviceStageModel? get dvReportCurrent => _dvReportCurrent;
   late int _currentGroupID;
   int currentGroupIndex = 0;
   int timeIntervalCurrent = 20;
   int timeInterval = 60;
+  bool _isSearch = false;
+  bool get isSearch => _isSearch;
+  List<String> _searchTerms = [];
+  List<String> get searchTerms => _searchTerms;
 
   @override
   void onInit() {
-    getGroupDevice();
-
     super.onInit();
   }
 
   @override
   void onClose() {
+    debugPrint('onClose');
     intervalDispose();
     super.onClose();
   }
@@ -56,6 +62,48 @@ class DeviceController extends GetxController {
     update();
   }
 
+  Future<void> getListDVStage() async {
+    // _loading = true;
+    await DeviceAPI.getListDevieStage(_currentGroupID).then((res) async {
+      var listDState = List<DeviceStageModel>.from(
+          res.map((e) => DeviceStageModel.fromJson(e)).toList());
+
+      listGroup[currentGroupIndex].listDvStage = listDState;
+    });
+    // _loading = false;
+    update();
+  }
+
+  void setDvInfo(deviceId) async {
+    _loading = true;
+    await DeviceAPI.getDevieStageById(_deviceStage!.deviceID, true)
+        .then((res) async {
+      _deviceStage!.deviceInfo = DeviceInfoModel.fromJson(res);
+    });
+    _loading = false;
+    update();
+  }
+
+  Future<DeviceStageModel> getDeviceInfo(deviceId) async {
+    _loading = true;
+    DeviceStageModel? result = null;
+    await DeviceAPI.getDevieStageById(deviceId, true).then((res) async {
+      result = DeviceStageModel.fromJson(res);
+      result!.deviceInfo = DeviceInfoModel.fromJson(res);
+    });
+    _loading = false;
+    update();
+    return result!;
+  }
+
+  void setDeviceReport(int deviceId) {
+    _dvReportCurrent = listGroup[currentGroupIndex]
+        .listDvStage!
+        .where((element) => element.deviceID == deviceId)
+        .first;
+    update();
+  }
+
   void changeCurrentGroupByIndex(value) {
     currentGroupIndex = value;
     _currentGroupID = listGroup[currentGroupIndex].vehicleGroupID;
@@ -79,6 +127,7 @@ class DeviceController extends GetxController {
     _intervalCurrentData =
         Timer.periodic(Duration(seconds: timeIntervalCurrent), (timer) async {
       await DeviceAPI.getListDevieStage(_currentGroupID).then((res) async {
+        debugPrint('intervalCurrentData');
         var listDState = List<DeviceStageModel>.from(
             res.map((e) => DeviceStageModel.fromJson(e)).toList());
 
@@ -116,5 +165,16 @@ class DeviceController extends GetxController {
     if (_interval != null) {
       _interval!.cancel();
     }
+  }
+
+  // SEARCH
+  void openSearch() {
+    _isSearch = true;
+    update();
+  }
+
+  void closeSearch() {
+    _isSearch = false;
+    update();
   }
 }

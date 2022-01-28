@@ -1,7 +1,8 @@
 import 'package:bubble_tab_indicator/bubble_tab_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:seatrack_ui/src/core/controllers/device_controller_2.dart';
+import 'package:seatrack_ui/src/core/controllers/device_controller.dart';
+import 'package:seatrack_ui/src/helper/ulti.dart';
 import 'package:seatrack_ui/src/models/device_model.dart';
 
 import 'widgets/list_device_widgets.dart';
@@ -42,10 +43,9 @@ class DevicePageState extends State<DevicePage>
 
   @override
   Widget build(BuildContext context) {
-    Get.lazyPut(() => DeviceController2());
     return Scaffold(
-      body: GetBuilder<DeviceController2>(
-        init: Get.find<DeviceController2>(),
+      body: GetBuilder<DeviceController>(
+        init: Get.find<DeviceController>(),
         builder: (controller) => NestedScrollView(
           headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
             return <Widget>[
@@ -68,15 +68,16 @@ class DevicePageState extends State<DevicePage>
                       ),
                 actions: <Widget>[
                   PopupMenuButton(
-                    itemBuilder: (context) => controller.listDGroup
+                    itemBuilder: (context) => controller.listGroup
                         .map(
                           (e) => PopupMenuItem(
                             child: Text("${e.vehicleGroup} (${e.countdv})"),
-                            value: controller.listDGroup.indexOf(e),
+                            value: controller.listGroup.indexOf(e),
                             onTap: () {
                               controller.closeSearch();
 
-                              controller.changeCurrentGroup(e.vehicleGroupID);
+                              controller
+                                  .changeCurrentGroupById(e.vehicleGroupID);
                             },
                           ),
                         )
@@ -118,14 +119,13 @@ class DevicePageState extends State<DevicePage>
 
                     if (controller.isSearch) {
                       List<DeviceStageModel> temp = [];
-                      if (controller.dvStageCurent != null) {
-                        temp.add(controller.dvStageCurent!);
+                      if (controller.deviceStage != null) {
+                        temp.add(controller.deviceStage!);
                       }
                       listDevices = temp;
                     } else {
                       listDevices = controller
-                          .listDGroup[controller.currentIndexGroup]
-                          .listDvStage!;
+                          .listGroup[controller.currentGroupIndex].listDvStage!;
                     }
                     switch (index) {
                       case 0:
@@ -172,7 +172,7 @@ class DevicePageState extends State<DevicePage>
 }
 
 class CustomSearchDelegate extends SearchDelegate {
-  List<String> searchTerms = Get.find<DeviceController2>().searchTerms;
+  List<String> searchTerms = Get.find<DeviceController>().searchTerms;
   @override
   List<Widget> buildActions(BuildContext context) {
     return [
@@ -190,7 +190,7 @@ class CustomSearchDelegate extends SearchDelegate {
     return IconButton(
       icon: const Icon(Icons.arrow_back),
       onPressed: () {
-        Get.find<DeviceController2>().closeSearch();
+        Get.find<DeviceController>().closeSearch();
         close(context, null);
       },
     );
@@ -200,8 +200,7 @@ class CustomSearchDelegate extends SearchDelegate {
   Widget buildResults(BuildContext context) {
     debugPrint('buildResults');
     List<DeviceStageModel> matchQuery = [];
-    List<DeviceGroupModel> listDGroup =
-        Get.find<DeviceController2>().listDGroup;
+    List<DeviceGroupModel> listDGroup = Get.find<DeviceController>().listGroup;
     for (var item in listDGroup) {
       if (item.listDvStage != null) {
         for (var item2 in item.listDvStage!) {
@@ -219,13 +218,42 @@ class CustomSearchDelegate extends SearchDelegate {
         itemCount: matchQuery.length,
         itemBuilder: (context, index) {
           var result = matchQuery[index];
-          return ListTile(
-              leading: Icon(Icons.local_taxi),
-              title: Text(result.vehicleNumber),
+          return Card(
+            child: InkWell(
               onTap: () {
-                Get.find<DeviceController2>().setSearch(result);
+                Get.find<DeviceController>().setDeviceState(result);
                 close(context, null);
-              });
+              },
+              child: Padding(
+                padding: EdgeInsets.all(10),
+                child: Row(
+                  children: [
+                    CircleAvatar(
+                        child: Icon(Icons.directions_car, color: Colors.white),
+                        backgroundColor: statusColor(result.state)),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Container(
+                      height: 40,
+                      width: 2,
+                      color: statusColor(result.state),
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      result.vehicleNumber,
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          color: statusColor(result.state)),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
         });
   }
 
@@ -233,8 +261,7 @@ class CustomSearchDelegate extends SearchDelegate {
   Widget buildSuggestions(BuildContext context) {
     debugPrint('buildSuggestions');
     List<DeviceStageModel> matchQuery = [];
-    List<DeviceGroupModel> listDGroup =
-        Get.find<DeviceController2>().listDGroup;
+    List<DeviceGroupModel> listDGroup = Get.find<DeviceController>().listGroup;
     for (var item in listDGroup) {
       if (item.listDvStage != null) {
         for (var item2 in item.listDvStage!) {
@@ -244,22 +271,51 @@ class CustomSearchDelegate extends SearchDelegate {
         }
       }
     }
-    if (matchQuery.length == 0)
-      return Container(
-          child: Center(child: Text('Không tìm thấy thông tin xe...')));
-    else
+    if (matchQuery.length == 0) {
+      return Center(child: Text('Không tìm thấy thông tin xe...'));
+    } else {
       return ListView.builder(
         itemCount: matchQuery.length,
         itemBuilder: (context, index) {
           var result = matchQuery[index];
-          return ListTile(
-              leading: Icon(Icons.local_taxi),
-              title: Text(result.vehicleNumber),
+          return Card(
+            child: InkWell(
               onTap: () {
-                Get.find<DeviceController2>().setSearch(result);
+                Get.find<DeviceController>().setDeviceState(result);
                 close(context, null);
-              });
+              },
+              child: Padding(
+                padding: EdgeInsets.all(10),
+                child: Row(
+                  children: [
+                    CircleAvatar(
+                        child: Icon(Icons.directions_car, color: Colors.white),
+                        backgroundColor: statusColor(result.state)),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Container(
+                      height: 40,
+                      width: 2,
+                      color: statusColor(result.state),
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      result.vehicleNumber,
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          color: statusColor(result.state)),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
         },
       );
+    }
   }
 }

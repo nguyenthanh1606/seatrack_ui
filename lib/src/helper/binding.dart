@@ -7,7 +7,6 @@ class Binding extends Bindings {
   @override
   void dependencies() {
     Get.lazyPut(() => AuthController());
-    Get.lazyPut(() => AlterController());
     Get.lazyPut(() => NetworkViewModel());
     Get.lazyPut(() => DeviceController());
     Get.lazyPut(() => AppSystemController());

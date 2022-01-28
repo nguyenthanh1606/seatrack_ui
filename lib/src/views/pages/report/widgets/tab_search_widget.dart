@@ -3,7 +3,7 @@ import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:seatrack_ui/src/core/controllers/_controller.dart';
-import 'package:seatrack_ui/src/core/controllers/device_controller_2.dart';
+import 'package:seatrack_ui/src/core/controllers/device_controller.dart';
 
 class TabSearchWidget extends StatelessWidget {
   const TabSearchWidget({Key? key}) : super(key: key);
@@ -154,7 +154,7 @@ class TabSearchFirstWidget extends StatelessWidget {
                                         Scaffold.of(context).openEndDrawer();
                                       },
                                       child: Text(
-                                        Get.find<DeviceController2>()
+                                        Get.find<DeviceController>()
                                             .dvReportCurrent!
                                             .vehicleNumber,
                                         style: TextStyle(
@@ -174,9 +174,10 @@ class TabSearchFirstWidget extends StatelessWidget {
                                   if (checkD(
                                       controller.start!, controller.end!)) {
                                     controller.getListReportHistory(
-                                        Get.find<DeviceController2>()
+                                        Get.find<DeviceController>()
                                             .dvReportCurrent!
-                                            .deviceID);
+                                            .deviceID,
+                                        3);
                                   } else {
                                     String message =
                                         "Quãng thời gian không quá 1 ngày \nVui lòng nhập lại.";
